@@ -42,26 +42,26 @@ interface Props {
 const ALL_PROPERTIES_SYNCED: Property[] = [
   { 
     id: "1", 
-    nama_property: "Skyline Space", 
-    alamat: "45 Pine Street", 
+    name: "Skyline Space", 
+    location: "45 Pine Street", 
     slug: "skyline-space",
-    gambar_utama: ["media/property-1.jpg"], // Harus Array
+    image: ["media/property-1.jpg"], // Harus Array
     tipe_rumah: [{ sqft: 3200, bedrooms: 5, bathrooms: 4 }] // Harus Array of Object
   },
   { 
     id: "2", 
-    nama_property: "Urban Oasis", 
-    alamat: "24 Brooklyn St.", 
+    name: "Urban Oasis", 
+    location: "24 Brooklyn St.", 
     slug: "urban-oasis",
-    gambar_utama: ["media/property-2.jpg"], 
+    image: ["media/property-2.jpg"], 
     tipe_rumah: [{ sqft: 2800, bedrooms: 6, bathrooms: 4 }] 
   },
   { 
     id: "3", 
-    nama_property: "White Haven", 
-    alamat: "Oak Lane", 
+    name: "White Haven", 
+    location: "Oak Lane", 
     slug: "white-haven",
-    gambar_utama: ["media/property-3.jpg"], 
+    image: ["media/property-3.jpg"], 
     tipe_rumah: [{ sqft: 4500, bedrooms: 6, bathrooms: 5 }] 
   }
 ];
@@ -152,8 +152,8 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
           >
             <div className="relative h-[300px] sm:h-[380px]">
               <img
-                src={featured.gambar_utama?.[0] ? `/storage/${featured.gambar_utama[0]}` : "/storage/media/property-1.jpg"}
-                alt={featured.nama_property}
+                src={featured.image?.[0] ? `/storage/${featured.image[0]}` : "/storage/media/property-1.jpg"}
+                alt={featured.name}
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
@@ -161,7 +161,7 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
             <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-12">
               <span className="text-sm font-medium tracking-wide text-white/70 uppercase">Featured Residence</span>
               <h2 className="mt-2 text-3xl font-bold text-white group-hover:text-emerald-300 transition-colors sm:text-4xl">
-                {featured.nama_property}
+                {featured.name}
               </h2>
             </div>
           </Link>

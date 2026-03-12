@@ -1,4 +1,4 @@
-import { Link, Head } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import {
   ChevronRight,
   Eye,
@@ -8,8 +8,8 @@ import {
   Mail,
   Clock,
 } from "lucide-react"
-import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 import { Footer } from "@/v0-ui-quinland/components/layout/footer"
+import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 import { PropertyCard, type Property } from "@/v0-ui-quinland/components/properties/property-card"
 
 /* ────────────────────────── Static Data ────────────────────────── */
@@ -19,31 +19,43 @@ const PROPERTIES: Property[] = [
     id: "1",
     name: "Skyline Space",
     location: "45 Pine Street",
-    image: "/storage/media/property-1.jpg",
-    bedrooms: 5,
-    bathrooms: 4,
-    sqft: 3200,
-    category: "Featured",
+    slug: "skyline-space", // Added missing slug
+    image: ["media/property-1.jpg"], // Removed /storage/ here because your Card adds it
+    tipe_rumah: [
+      {
+        bedrooms: 5,
+        bathrooms: 4,
+        sqft: 3200,
+      }
+    ],
   },
   {
     id: "2",
     name: "Urban Oasis",
     location: "24 Brooklyn St.",
-    image: "/storage/media/property-2.jpg",
-    bedrooms: 6,
-    bathrooms: 4,
-    sqft: 2800,
-    category: "Featured",
+    slug: "urban-oasis",
+    image: ["media/property-2.jpg"],
+    tipe_rumah: [
+      {
+        bedrooms: 6,
+        bathrooms: 4,
+        sqft: 2800,
+      }
+    ],
   },
   {
     id: "3",
     name: "White Haven",
     location: "Oak Lane",
-    image: "/storage/media/property-3.jpg",
-    bedrooms: 6,
-    bathrooms: 5,
-    sqft: 4500,
-    category: "Featured",
+    slug: "white-haven",
+    image: ["media/property-3.jpg"],
+    tipe_rumah: [
+      {
+        bedrooms: 6,
+        bathrooms: 5,
+        sqft: 4500,
+      }
+    ],
   },
 ]
 
