@@ -1,11 +1,12 @@
-import Image from "next/image"
-import Link from "next/link"
-import { ChevronRight } from "lucide-react"
-import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
-import { Footer } from "@/v0-ui-quinland/components/layout/footer"
-import { PropertyCard, type Property } from "@/v0-ui-quinland/components/properties/property-card"
-import { EventsSection } from "@/v0-ui-quinland/components/events/events-section"
-import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section"
+import { Link } from '@inertiajs/react'; // Pakai Link punya Inertia
+import { ChevronRight } from "lucide-react";
+
+// Urutkan alfabetis biar ESLint nggak marah lagi
+import { EventsSection } from "@/components/events/events-section";
+import { FaqSection } from "@/components/faq/faq-section";
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/layout/navbar";
+import { PropertyCard, type Property } from "@/components/properties/property-card";
 
 /* ─── Property data ─── */
 const FEATURED_PROPERTY: Property = {
@@ -89,12 +90,10 @@ export default function PropertyPage() {
 
       {/* ─── Hero Banner ─── */}
       <section className="relative flex h-[340px] items-end sm:h-[400px]">
-        <Image
+        <img
           src="/storage/media/property-hero.jpg"
           alt="Residential community"
-          fill
-          className="object-cover"
-          priority
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
 
@@ -136,11 +135,10 @@ export default function PropertyPage() {
             className="group relative block overflow-hidden rounded-3xl"
           >
             <div className="relative h-[300px] sm:h-[380px]">
-              <Image
+              <img
                 src={FEATURED_PROPERTY.image}
                 alt={FEATURED_PROPERTY.name}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
             </div>

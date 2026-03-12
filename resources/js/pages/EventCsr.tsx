@@ -1,4 +1,4 @@
-import { Link, Head } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import {
   ChevronRight,
   TreePine,
@@ -8,10 +8,10 @@ import {
   ArrowRight,
   Calendar,
 } from "lucide-react"
-import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 import { EventsSection } from "@/v0-ui-quinland/components/events/events-section"
 import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section"
 import { Footer } from "@/v0-ui-quinland/components/layout/footer"
+import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 
 const CSR_PROGRAMS = [
   {

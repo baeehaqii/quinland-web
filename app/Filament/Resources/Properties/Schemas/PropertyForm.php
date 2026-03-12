@@ -22,7 +22,7 @@ class PropertyForm
                     ->schema([
                         Select::make('unit_bisnis_id')
                             ->label('Unit Bisnis')
-                            ->relationship('unitBisnis', 'name')
+                        ->relationship('unitBisnis', 'nama_unit_bisnis')
                             ->searchable()
                             ->preload()
                             ->columnSpan(1),

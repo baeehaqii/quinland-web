@@ -1,188 +1,202 @@
-import { Link, Head } from '@inertiajs/react';
-import { ChevronRight } from "lucide-react"
-import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
-import { Footer } from "@/v0-ui-quinland/components/layout/footer"
-import { PropertyCard, type Property } from "@/v0-ui-quinland/components/properties/property-card"
-import { EventsSection } from "@/v0-ui-quinland/components/events/events-section"
-import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section"
+import { Link } from '@inertiajs/react';
+import { ChevronRight, ChevronLeft } from "lucide-react";
+import { useState, useEffect } from 'react';
 
-/* ─── Property data ─── */
-const FEATURED_PROPERTY: Property = {
-  id: "1",
-  name: "Skyline Space",
-  location: "45 Pine Street",
-  image: "/storage/media/property-1.jpg",
-  bedrooms: 5,
-  bathrooms: 4,
-  sqft: 3200,
-  category: "Featured",
+// Import Components
+import { EventsSection } from "@/v0-ui-quinland/components/events/events-section";
+import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section";
+import { Footer } from "@/v0-ui-quinland/components/layout/footer";
+import { Navbar } from "@/v0-ui-quinland/components/layout/navbar";
+import { PropertyCard, type Property } from "@/v0-ui-quinland/components/properties/property-card";
+
+/* ─── 1. Definisi Types ─── */
+interface HeroSlide {
+  image_url?: string;
+  alt: string;
+  tagline: string;
+  heading: string;
+  cta_label?: string;
+  cta_url?: string;
 }
 
-const ALL_PROPERTIES: Property[] = [
-  {
-    id: "1",
-    name: "Skyline Space",
-    location: "45 Pine Street",
-    image: "/storage/media/property-1.jpg",
-    bedrooms: 5,
-    bathrooms: 4,
-    sqft: 3200,
-    category: "Featured",
-  },
-  {
-    id: "2",
-    name: "Urban Oasis",
-    location: "24 Brooklyn St.",
-    image: "/storage/media/property-2.jpg",
-    bedrooms: 6,
-    bathrooms: 4,
-    sqft: 2800,
-    category: "Featured",
-  },
-  {
-    id: "3",
-    name: "White Haven",
-    location: "Oak Lane",
-    image: "/storage/media/property-3.jpg",
-    bedrooms: 6,
-    bathrooms: 5,
-    sqft: 4500,
-    category: "Featured",
-  },
-  {
-    id: "4",
-    name: "Metro Loft",
-    location: "12 Central Ave",
-    image: "/storage/media/property-1.jpg",
-    bedrooms: 3,
-    bathrooms: 2,
-    sqft: 1800,
-    category: "Apartment",
-  },
-  {
-    id: "5",
-    name: "Sunset Villa",
-    location: "88 Hillside Dr",
-    image: "/storage/media/property-2.jpg",
-    bedrooms: 4,
-    bathrooms: 3,
-    sqft: 2600,
-    category: "Residential",
-  },
-  {
-    id: "6",
-    name: "Harbor View",
-    location: "5 Marina Bay",
-    image: "/storage/media/property-3.jpg",
-    bedrooms: 3,
-    bathrooms: 2,
-    sqft: 2100,
-    category: "Condos",
-  },
-]
+interface PageSection {
+  type: string;
+  data: {
+    title?: string;
+    description?: string;
+    cta_label?: string;
+    cta_url?: string;
+    slides?: HeroSlide[];
+  };
+}
 
-export default function PropertyPage() {
+interface Props {
+  page: {
+    title: string;
+    content: PageSection[];
+  };
+  properties?: Property[];
+}
+
+/* ─── 2. Data Statis Fallback (DISINKRONKAN DENGAN MODEL LARAVEL) ─── */
+const ALL_PROPERTIES_SYNCED: Property[] = [
+  { 
+    id: "1", 
+    nama_property: "Skyline Space", 
+    alamat: "45 Pine Street", 
+    slug: "skyline-space",
+    gambar_utama: ["media/property-1.jpg"], // Harus Array
+    tipe_rumah: [{ sqft: 3200, bedrooms: 5, bathrooms: 4 }] // Harus Array of Object
+  },
+  { 
+    id: "2", 
+    nama_property: "Urban Oasis", 
+    alamat: "24 Brooklyn St.", 
+    slug: "urban-oasis",
+    gambar_utama: ["media/property-2.jpg"], 
+    tipe_rumah: [{ sqft: 2800, bedrooms: 6, bathrooms: 4 }] 
+  },
+  { 
+    id: "3", 
+    nama_property: "White Haven", 
+    alamat: "Oak Lane", 
+    slug: "white-haven",
+    gambar_utama: ["media/property-3.jpg"], 
+    tipe_rumah: [{ sqft: 4500, bedrooms: 6, bathrooms: 5 }] 
+  }
+];
+
+export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED }: Props) {
+  /* ─── 3. Hooks (Wajib di atas) ─── */
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const heroBlock = page?.content?.find(b => b.type === 'hero');
+  const slides = heroBlock?.data?.slides || [];
+
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
+  /* ─── 4. Guard Clause ─── */
+  if (!page || !page.content) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="animate-pulse font-medium text-foreground">Loading content...</p>
+      </div>
+    );
+  }
+
+  /* ─── 5. Mapping Data ─── */
+  const propertyBlock = page.content.find(b => b.type === 'properties');
+  const eventBlock = page.content.find(b => b.type === 'events');
+
+  const goToNext = () => setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  const goToPrev = () => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+
+  // Ambil data untuk Featured Residence
+  const featured = properties[0] || ALL_PROPERTIES_SYNCED[0];
+
   return (
-    <>
+    <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* ─── Hero Banner ─── */}
-      <section className="relative flex h-[340px] items-end sm:h-[400px]">
-        <img
-          src="/storage/media/property-hero.jpg"
-          alt="Residential community"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
-
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-12 lg:px-10">
-          {/* Breadcrumb */}
-          <nav
-            className="mb-4 flex items-center gap-1.5 text-sm text-white/70"
-            aria-label="Breadcrumb"
+      {/* Hero Carousel */}
+      <section className="relative h-[450px] w-full overflow-hidden sm:h-[550px]">
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
           >
-            <Link href="/" className="transition-colors hover:text-white">
-              Home
-            </Link>
-            <ChevronRight className="size-3.5" />
-            <Link
-              href="/property"
-              className="transition-colors hover:text-white"
-            >
-              Discover Projects
-            </Link>
-            <ChevronRight className="size-3.5" />
-            <span className="font-semibold text-white">Residential</span>
-          </nav>
+            <img
+              src={slide.image_url || "/storage/media/property-hero.jpg"}
+              alt={slide.alt}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+            <div className="relative z-20 mx-auto flex h-full w-full max-w-7xl flex-col justify-end px-6 pb-12 lg:px-10">
+              <nav className="mb-4 flex items-center gap-1.5 text-sm text-white/70">
+                <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                <ChevronRight className="size-3.5" />
+                <span className="font-semibold text-white">{page.title}</span>
+              </nav>
+              <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">{slide.heading}</h1>
+              <p className="mt-3 max-w-xl text-lg text-white/80">{slide.tagline}</p>
+            </div>
+          </div>
+        ))}
 
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-            Residential
-          </h1>
-          <p className="mt-3 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
-            Houses to everyone who wants to experience first hand what a modern,
-            vibrant multicultural community really feels like.
-          </p>
-        </div>
+        {slides.length > 1 && (
+          <div className="absolute inset-0 z-30 flex items-center justify-between px-4">
+             <button onClick={goToPrev} className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all">
+                <ChevronLeft className="size-6" />
+             </button>
+             <button onClick={goToNext} className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all">
+                <ChevronRight className="size-6" />
+             </button>
+          </div>
+        )}
       </section>
 
-      <main className="bg-background">
-        {/* ─── Featured Residence ─── */}
+      <main>
+        {/* Featured Residence */}
         <section className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
           <Link
-            href={`/property/${FEATURED_PROPERTY.id}`}
+            href={`/property/${featured.slug}`}
             className="group relative block overflow-hidden rounded-3xl"
           >
             <div className="relative h-[300px] sm:h-[380px]">
               <img
-                src={FEATURED_PROPERTY.image}
-                alt={FEATURED_PROPERTY.name}
+                src={featured.gambar_utama?.[0] ? `/storage/${featured.gambar_utama[0]}` : "/storage/media/property-1.jpg"}
+                alt={featured.nama_property}
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
             </div>
-
-            <div className="absolute inset-0 flex flex-col justify-end p-8 sm:justify-center sm:p-12">
-              <span className="text-sm font-medium tracking-wide text-white/70">
-                Featured Residence
-              </span>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-white transition-colors group-hover:text-emerald-300 sm:text-4xl">
-                {FEATURED_PROPERTY.name}
+            <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-12">
+              <span className="text-sm font-medium tracking-wide text-white/70 uppercase">Featured Residence</span>
+              <h2 className="mt-2 text-3xl font-bold text-white group-hover:text-emerald-300 transition-colors sm:text-4xl">
+                {featured.nama_property}
               </h2>
-              <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/80 sm:text-base">
-                A premium residential development offering spacious units, green
-                facilities, and contemporary home designs in a strategic
-                location.
-              </p>
             </div>
           </Link>
         </section>
 
-        {/* ─── Property Grid ─── */}
+        {/* Property Grid */}
         <section className="mx-auto max-w-7xl px-6 pb-16 lg:px-10">
           <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              All Properties
-            </h2>
-            <span className="text-sm text-muted-foreground">
-              {ALL_PROPERTIES.length} projects
-            </span>
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                {propertyBlock?.data?.title || "All Properties"}
+              </h2>
+              {propertyBlock?.data?.description && (
+                <p className="text-sm text-muted-foreground mt-1">{propertyBlock.data.description}</p>
+              )}
+            </div>
+            <span className="text-sm text-muted-foreground">{properties.length} projects found</span>
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {ALL_PROPERTIES.map((property) => (
+            {properties.map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))}
           </div>
         </section>
 
-        {/* ─── Events ─── */}
-        <EventsSection />
-
-        {/* ─── FAQ ─── */}
+        <EventsSection 
+          title={eventBlock?.data?.title} 
+          ctaLabel={eventBlock?.data?.cta_label}
+          ctaUrl={eventBlock?.data?.cta_url}
+        />
         <FaqSection />
       </main>
 
       <Footer />
-    </>
-  )
+    </div>
+  );
 }

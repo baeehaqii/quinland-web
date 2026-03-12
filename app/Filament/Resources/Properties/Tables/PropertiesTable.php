@@ -63,7 +63,7 @@ class PropertiesTable
                     )
                     ->sortable(),
 
-                TextColumn::make('unitBisnis.name')
+                TextColumn::make('unitBisnis.nama_unit_bisnis')
                     ->label('Unit Bisnis')
                     ->searchable()
                     ->sortable(),
@@ -102,7 +102,7 @@ class PropertiesTable
 
                 SelectFilter::make('unit_bisnis_id')
                     ->label('Unit Bisnis')
-                    ->relationship('unitBisnis', 'name'),
+                    ->relationship('unitBisnis', 'nama_unit_bisnis'),
             ])
             ->recordActions([
                 EditAction::make(),

@@ -1,6 +1,14 @@
 import { Link } from '@inertiajs/react';
-import { Calendar, ArrowRight } from "lucide-react"
+import { Calendar, ArrowRight } from "lucide-react";
 
+/* ─── 1. Definisi Interface Props ─── */
+interface EventsSectionProps {
+  title?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+}
+
+/* ─── 2. Data Dummy (Tetap di sini sebagai fallback/isi list) ─── */
 const EVENTS = [
   {
     id: 1,
@@ -26,21 +34,26 @@ const EVENTS = [
     date: "17 Agt 2025",
     image: "/storage/media/event-3.jpg",
   },
-]
+];
 
-export function EventsSection() {
+/* ─── 3. Komponen Utama ─── */
+export function EventsSection({ 
+  title = "Special Events", 
+  ctaLabel = "See All", 
+  ctaUrl = "/events" 
+}: EventsSectionProps) {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      {/* Header */}
+      {/* Header - Sekarang mengambil data dari Props (Database) */}
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Special Events
+          {title}
         </h2>
         <Link
-          href="/events"
+          href={ctaUrl}
           className="group flex items-center gap-2 text-sm font-semibold text-red-600 transition-colors hover:text-red-700"
         >
-          See All
+          {ctaLabel}
           <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
         </Link>
       </div>
@@ -57,8 +70,7 @@ export function EventsSection() {
               <img
                 src={event.image}
                 alt={event.title}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             </div>
 
@@ -82,5 +94,5 @@ export function EventsSection() {
         ))}
       </div>
     </section>
-  )
+  );
 }
