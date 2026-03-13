@@ -34,18 +34,23 @@ git clean -fd
 echo "[deploy] Deployed commit: $(git rev-parse --short HEAD)"
 
 # Install/update PHP dependencies.
-"$PHP_BIN" "$COMPOSER_BIN" install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+"$PHP_BIN" "$COMPOSER_BIN" install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts
 
 # Build frontend assets when npm exists.
 if command -v npm >/dev/null 2>&1; then
-  npm ci --no-audit --no-fund
-  npm run build
+  npm ci --no-audit --no-fund --loglevel=error
+  npm run build --loglevel=error
 else
   echo "[deploy] npm not found, skip build"
 fi
 
 # Laravel deploy steps.
-"$PHP_BIN" artisan storage:link || true
+if [ ! -L public/storage ]; then
+  "$PHP_BIN" artisan storage:link
+else
+  echo "[deploy] public/storage symlink already exists"
+fi
+"$PHP_BIN" artisan package:discover --ansi
 "$PHP_BIN" artisan migrate --force
 "$PHP_BIN" artisan config:cache
 "$PHP_BIN" artisan route:cache
