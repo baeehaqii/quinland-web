@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { usePage } from "@inertiajs/react"
 import { FeatureCard } from "./feature-card"
 import { BrickWall, Home, Triangle, LayoutGrid } from "lucide-react"
+import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
 const FEATURES = [
   {
@@ -36,13 +38,16 @@ const ABOUT_DESCRIPTION =
 
 export function AboutSection() {
   const [showDescription, setShowDescription] = useState(false)
+  const { props } = usePage<any>()
+  const media = props.media || {}
+  const coverImage = resolveMediaUrl(media.about_cover, "/storage/media/hero-bg-2.jpg")
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Image with overlay text */}
       <div className="relative overflow-hidden rounded-2xl">
         <img
-          src="/storage/media/hero-bg-2.jpg"
+          src={coverImage}
           alt="Modern luxury house with contemporary architecture"
           width={1400}
           height={600}
@@ -60,8 +65,8 @@ export function AboutSection() {
             {/* ABOUT US title */}
             <h2
               className={`text-center font-sans text-5xl font-bold tracking-wider text-white uppercase transition-all duration-700 ease-in-out sm:text-7xl lg:text-8xl ${showDescription
-                  ? "translate-y-4 scale-95 opacity-0"
-                  : "translate-y-0 scale-100 opacity-100"
+                ? "translate-y-4 scale-95 opacity-0"
+                : "translate-y-0 scale-100 opacity-100"
                 }`}
             >
               About Us
@@ -70,8 +75,8 @@ export function AboutSection() {
             {/* Description text */}
             <p
               className={`absolute inset-0 flex items-center text-left text-sm leading-relaxed font-medium text-white/90 transition-all duration-700 ease-in-out sm:text-base lg:text-lg ${showDescription
-                  ? "translate-y-0 opacity-100"
-                  : "-translate-y-4 opacity-0"
+                ? "translate-y-0 opacity-100"
+                : "-translate-y-4 opacity-0"
                 }`}
             >
               {ABOUT_DESCRIPTION}
@@ -95,8 +100,8 @@ export function AboutSection() {
           <div
             key={feature.title}
             className={`px-6 ${index < FEATURES.length - 1
-                ? "border-b border-border pb-8 sm:border-b-0 lg:border-r lg:pb-0"
-                : ""
+              ? "border-b border-border pb-8 sm:border-b-0 lg:border-r lg:pb-0"
+              : ""
               } ${index % 2 === 0 && index < FEATURES.length - 1 ? "sm:border-r sm:pb-0" : ""}`}
           >
             <FeatureCard

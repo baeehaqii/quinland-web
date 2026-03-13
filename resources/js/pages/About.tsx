@@ -11,6 +11,7 @@ import {
 import { Footer } from "@/v0-ui-quinland/components/layout/footer"
 import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 import { PropertyCard, type Property } from "@/v0-ui-quinland/components/properties/property-card"
+import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
 /* ────────────────────────── Static Data ────────────────────────── */
 
@@ -20,7 +21,7 @@ const PROPERTIES: Property[] = [
     name: "Skyline Space",
     location: "45 Pine Street",
     slug: "skyline-space", // Added missing slug
-    image: ["media/property-1.jpg"], // Removed /storage/ here because your Card adds it
+    image: ["media/property-1.jpg"],
     tipe_rumah: [
       {
         bedrooms: 5,
@@ -59,7 +60,26 @@ const PROPERTIES: Property[] = [
   },
 ]
 
-export default function AboutPage() {
+interface AboutPageProps {
+  media?: Record<string, string>
+}
+
+export default function AboutPage({ media = {} }: AboutPageProps) {
+  const properties: Property[] = [
+    {
+      ...PROPERTIES[0],
+      image: [resolveMediaUrl(media.property_1, '/storage/media/property-1.jpg')],
+    },
+    {
+      ...PROPERTIES[1],
+      image: [resolveMediaUrl(media.property_2, '/storage/media/property-2.jpg')],
+    },
+    {
+      ...PROPERTIES[2],
+      image: [resolveMediaUrl(media.property_3, '/storage/media/property-3.jpg')],
+    },
+  ]
+
   return (
     <>
       <Navbar />
@@ -67,7 +87,7 @@ export default function AboutPage() {
         {/* ─── Hero Banner ─── */}
         <section className="relative flex h-[340px] items-end overflow-hidden sm:h-[400px]">
           <img
-            src="/storage/media/about-hero.jpg"
+            src={resolveMediaUrl(media.about_hero, "/storage/media/about-hero.jpg")}
             alt="About Quinland Grup"
             className="absolute inset-0 h-full w-full object-cover"
           />
@@ -146,7 +166,7 @@ export default function AboutPage() {
             {/* Right - Image */}
             <div className="relative overflow-hidden rounded-2xl">
               <img
-                src="/storage/media/about-team.jpg"
+                src={resolveMediaUrl(media.about_team, "/storage/media/about-team.jpg")}
                 alt="Tim Quinland Grup"
                 width={640}
                 height={480}
@@ -238,7 +258,7 @@ export default function AboutPage() {
             {/* Office Image */}
             <div className="overflow-hidden rounded-2xl">
               <img
-                src="/storage/media/office.jpg"
+                src={resolveMediaUrl(media.office, "/storage/media/office.jpg")}
                 alt="Kantor Quinland Grup"
                 width={640}
                 height={400}
@@ -347,7 +367,7 @@ export default function AboutPage() {
             </div>
 
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {PROPERTIES.map((property) => (
+              {properties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </div>

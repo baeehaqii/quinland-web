@@ -5,6 +5,7 @@ import { Link, Head } from '@inertiajs/react';
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 import { Footer } from "@/v0-ui-quinland/components/layout/footer"
+import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
 const ALL_ARTICLES = [
   {
@@ -83,7 +84,7 @@ const ALL_ARTICLES = [
 
 const FEATURED_ARTICLES = ALL_ARTICLES.slice(0, 3)
 
-function FeaturedSlider() {
+function FeaturedSlider({ articles }: { articles: typeof ALL_ARTICLES }) {
   const [current, setCurrent] = useState(0)
   const [animating, setAnimating] = useState(false)
   const [direction, setDirection] = useState<"next" | "prev">("next")
@@ -102,14 +103,14 @@ function FeaturedSlider() {
   )
 
   const prev = useCallback(() => {
-    const index = (current - 1 + FEATURED_ARTICLES.length) % FEATURED_ARTICLES.length
+    const index = (current - 1 + articles.length) % articles.length
     goTo(index, "prev")
-  }, [current, goTo])
+  }, [articles.length, current, goTo])
 
   const next = useCallback(() => {
-    const index = (current + 1) % FEATURED_ARTICLES.length
+    const index = (current + 1) % articles.length
     goTo(index, "next")
-  }, [current, goTo])
+  }, [articles.length, current, goTo])
 
   // Auto-play
   useEffect(() => {
@@ -119,7 +120,7 @@ function FeaturedSlider() {
     return () => clearInterval(timer)
   }, [next])
 
-  const article = FEATURED_ARTICLES[current]
+  const article = articles[current]
 
   return (
     <section className="mb-14">
@@ -189,7 +190,7 @@ function FeaturedSlider() {
 
         {/* Dot indicators */}
         <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-          {FEATURED_ARTICLES.map((_, i) => (
+          {articles.map((_, i) => (
             <button
               key={i}
               aria-label={`Pergi ke slide ${i + 1}`}
@@ -206,8 +207,36 @@ function FeaturedSlider() {
   )
 }
 
-export default function ArtikelPage() {
-  const rest = ALL_ARTICLES.slice(3)
+interface ArtikelPageProps {
+  media?: Record<string, string>
+}
+
+export default function ArtikelPage({ media = {} }: ArtikelPageProps) {
+  const blog1 = resolveMediaUrl(media.blog_1, "/storage/media/blog-1.jpg")
+  const blog2 = resolveMediaUrl(media.blog_2, "/storage/media/blog-2.jpg")
+  const blog3 = resolveMediaUrl(media.blog_3, "/storage/media/blog-3.jpg")
+  const blog4 = resolveMediaUrl(media.blog_4, "/storage/media/blog-4.jpg")
+
+  const articles = ALL_ARTICLES.map((article) => {
+    const imageMap: Record<number, string> = {
+      1: blog1,
+      2: blog2,
+      3: blog3,
+      4: blog4,
+      5: blog1,
+      6: blog2,
+      7: blog3,
+      8: blog4,
+    }
+
+    return {
+      ...article,
+      image: imageMap[article.id] || article.image,
+    }
+  })
+
+  const featuredArticles = articles.slice(0, 3)
+  const rest = articles.slice(3)
 
   return (
     <>
@@ -216,7 +245,7 @@ export default function ArtikelPage() {
       {/* Hero Banner */}
       <section className="relative flex h-[300px] items-end sm:h-[360px]">
         <img
-          src="/storage/media/blog-1.jpg"
+          src={blog1}
           alt="Artikel banner"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -246,7 +275,7 @@ export default function ArtikelPage() {
       <main className="bg-background">
         <div className="mx-auto max-w-7xl px-6 py-14 lg:px-10">
 
-          <FeaturedSlider />
+          <FeaturedSlider articles={featuredArticles} />
 
           {/* All Articles Grid */}
           <section>

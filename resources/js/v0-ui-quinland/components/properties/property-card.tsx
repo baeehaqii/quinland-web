@@ -3,10 +3,10 @@ import { MapPin, BedDouble, Bath, Ruler } from "lucide-react"
 
 export interface Property {
   id: string | number
-  name: string      
-  location: string             
-  image: string[]     
-  tipe_rumah: Array<{        
+  name: string
+  location: string
+  image: string[]
+  tipe_rumah: Array<{
     sqft: number;
     bedrooms: number;
     bathrooms: number;
@@ -21,12 +21,15 @@ interface PropertyCardProps {
 export function PropertyCard({ property }: PropertyCardProps) {
   // Ambil data tipe rumah pertama sebagai representasi di kartu
   const mainType = property.tipe_rumah?.[0] || { sqft: 0, bedrooms: 0, bathrooms: 0 };
-  
+
   // Ambil gambar pertama dari array image
   // Kita tambahkan /storage/ karena Laravel menyimpan path relatif
-  const displayImage = property.image?.[0] 
-    ? `/storage/${property.image[0]}`
-    : '/storage/media/placeholder.jpg';
+  const rawImage = property.image?.[0] ?? ''
+  const displayImage = rawImage
+    ? (rawImage.startsWith('http://') || rawImage.startsWith('https://') || rawImage.startsWith('/storage/')
+      ? rawImage
+      : `/storage/${rawImage.replace(/^\/+/, '')}`)
+    : '/storage/media/placeholder.jpg'
 
   return (
     <Link href={`/property/${property.slug}`} className="group block">

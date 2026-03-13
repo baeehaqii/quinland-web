@@ -1,5 +1,7 @@
 import { Link } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { ArrowRight } from "lucide-react"
+import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
 const FEATURED_POST = {
   id: 1,
@@ -42,6 +44,20 @@ const RECENT_POSTS = [
 ]
 
 export function NewsSection() {
+  const { props } = usePage<any>()
+  const media = props.media || {}
+
+  const featuredPost = {
+    ...FEATURED_POST,
+    image: resolveMediaUrl(media.blog_1, FEATURED_POST.image),
+  }
+
+  const recentPosts = [
+    { ...RECENT_POSTS[0], image: resolveMediaUrl(media.blog_2, RECENT_POSTS[0].image) },
+    { ...RECENT_POSTS[1], image: resolveMediaUrl(media.blog_3, RECENT_POSTS[1].image) },
+    { ...RECENT_POSTS[2], image: resolveMediaUrl(media.blog_4, RECENT_POSTS[2].image) },
+  ]
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       {/* Header */}
@@ -62,11 +78,11 @@ export function NewsSection() {
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Featured Post - Large with overlay */}
         <article className="group lg:col-span-3">
-          <Link href={`/news/${FEATURED_POST.id}`} className="block">
+          <Link href={`/news/${featuredPost.id}`} className="block">
             <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
               <img
-                src={FEATURED_POST.image}
-                alt={FEATURED_POST.title}
+                src={featuredPost.image}
+                alt={featuredPost.title}
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
 
@@ -76,20 +92,20 @@ export function NewsSection() {
               {/* Badge - Top Right */}
               <div className="absolute right-4 top-4">
                 <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
-                  {FEATURED_POST.category}
+                  {featuredPost.category}
                 </span>
               </div>
 
               {/* Content overlay - Bottom */}
               <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
                 <h3 className="text-2xl font-bold tracking-tight text-white transition-colors group-hover:text-emerald-400 sm:text-3xl">
-                  {FEATURED_POST.title}
+                  {featuredPost.title}
                 </h3>
                 <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-white/90 sm:text-base">
-                  {FEATURED_POST.excerpt}
+                  {featuredPost.excerpt}
                 </p>
                 <time className="mt-4 block text-sm text-white/80">
-                  {FEATURED_POST.date}
+                  {featuredPost.date}
                 </time>
               </div>
             </div>
@@ -98,7 +114,7 @@ export function NewsSection() {
 
         {/* Recent Posts - Small Cards */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          {RECENT_POSTS.map((post) => (
+          {recentPosts.map((post) => (
             <article key={post.id} className="group">
               <Link href={`/news/${post.id}`} className="flex gap-4">
                 <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-xl sm:h-24 sm:w-32">

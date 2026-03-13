@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { usePage, Link } from "@inertiajs/react"
 import { PropertySearch } from "./property-search"
+import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
 const SLIDES = [
   {
@@ -30,11 +31,32 @@ const INTERVAL_MS = 7000
 export function HeroSection() {
   const { props } = usePage<any>()
   const page = props.page
+  const media = props.media || {}
+
+  const staticSlides = [
+    {
+      ...SLIDES[0],
+      image: resolveMediaUrl(media.hero_bg_1, SLIDES[0].image),
+    },
+    {
+      ...SLIDES[1],
+      image: resolveMediaUrl(media.hero_bg_2, SLIDES[1].image),
+    },
+    {
+      ...SLIDES[2],
+      image: resolveMediaUrl(media.hero_bg_3, SLIDES[2].image),
+    },
+  ]
 
   // Extract dynamic slides from page.content if available
   const heroBlock = page?.content?.find((block: any) => block.type === 'hero')
   const dynamicSlides = heroBlock?.data?.slides
-  const activeSlides = dynamicSlides && dynamicSlides.length > 0 ? dynamicSlides : SLIDES
+  const activeSlides = dynamicSlides && dynamicSlides.length > 0
+    ? dynamicSlides.map((slide: any, index: number) => ({
+      ...slide,
+      image: resolveMediaUrl(slide.image_url || slide.image, staticSlides[index % staticSlides.length].image),
+    }))
+    : staticSlides
 
   const [current, setCurrent] = useState(0)
 

@@ -12,6 +12,7 @@ import { EventsSection } from "@/v0-ui-quinland/components/events/events-section
 import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section"
 import { Footer } from "@/v0-ui-quinland/components/layout/footer"
 import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
+import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
 const CSR_PROGRAMS = [
   {
@@ -62,7 +63,19 @@ export const metadata = {
     "Kegiatan event properti dan program Corporate Social Responsibility Quinland Grup untuk masyarakat dan lingkungan.",
 }
 
-export default function EventCsrPage() {
+interface EventCsrPageProps {
+  media?: Record<string, string>
+}
+
+export default function EventCsrPage({ media = {} }: EventCsrPageProps) {
+  const heroImage = resolveMediaUrl(media.event_csr_hero, "/storage/media/event-csr-hero.jpg")
+  const csrImages = [
+    resolveMediaUrl(media.csr_1, "/storage/media/csr-1.jpg"),
+    resolveMediaUrl(media.csr_2, "/storage/media/csr-2.jpg"),
+    resolveMediaUrl(media.csr_3, "/storage/media/csr-3.jpg"),
+    resolveMediaUrl(media.csr_4, "/storage/media/csr-4.jpg"),
+  ]
+
   return (
     <>
       <Navbar />
@@ -70,7 +83,7 @@ export default function EventCsrPage() {
         {/* ─── Hero Banner ─── */}
         <section className="relative h-[340px] w-full overflow-hidden sm:h-[400px]">
           <img
-            src="/storage/media/event-csr-hero.jpg"
+            src={heroImage}
             alt="Event & CSR Quinland Grup"
             className="absolute inset-0 h-full w-full object-cover"
           />
@@ -135,7 +148,7 @@ export default function EventCsrPage() {
                     {/* Image */}
                     <div className="relative h-52 overflow-hidden">
                       <img
-                        src={program.image}
+                        src={csrImages[program.id - 1] || program.image}
                         alt={program.title}
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />

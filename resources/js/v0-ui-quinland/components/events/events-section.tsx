@@ -1,5 +1,7 @@
 import { Link } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { Calendar, ArrowRight } from "lucide-react";
+import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
 /* ─── 1. Definisi Interface Props ─── */
 interface EventsSectionProps {
@@ -37,11 +39,20 @@ const EVENTS = [
 ];
 
 /* ─── 3. Komponen Utama ─── */
-export function EventsSection({ 
-  title = "Special Events", 
-  ctaLabel = "See All", 
-  ctaUrl = "/events" 
+export function EventsSection({
+  title = "Special Events",
+  ctaLabel = "See All",
+  ctaUrl = "/events"
 }: EventsSectionProps) {
+  const { props } = usePage<any>()
+  const media = props.media || {}
+
+  const events = [
+    { ...EVENTS[0], image: resolveMediaUrl(media.event_1, EVENTS[0].image) },
+    { ...EVENTS[1], image: resolveMediaUrl(media.event_2, EVENTS[1].image) },
+    { ...EVENTS[2], image: resolveMediaUrl(media.event_3, EVENTS[2].image) },
+  ]
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       {/* Header - Sekarang mengambil data dari Props (Database) */}
@@ -60,7 +71,7 @@ export function EventsSection({
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {EVENTS.map((event) => (
+        {events.map((event) => (
           <article
             key={event.id}
             className="group flex flex-col overflow-hidden rounded-2xl bg-card shadow-sm transition-shadow hover:shadow-md"

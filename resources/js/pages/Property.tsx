@@ -40,29 +40,29 @@ interface Props {
 
 /* ─── 2. Data Statis Fallback (DISINKRONKAN DENGAN MODEL LARAVEL) ─── */
 const ALL_PROPERTIES_SYNCED: Property[] = [
-  { 
-    id: "1", 
-    name: "Skyline Space", 
-    location: "45 Pine Street", 
+  {
+    id: "1",
+    name: "Skyline Space",
+    location: "45 Pine Street",
     slug: "skyline-space",
     image: ["media/property-1.jpg"], // Harus Array
     tipe_rumah: [{ sqft: 3200, bedrooms: 5, bathrooms: 4 }] // Harus Array of Object
   },
-  { 
-    id: "2", 
-    name: "Urban Oasis", 
-    location: "24 Brooklyn St.", 
+  {
+    id: "2",
+    name: "Urban Oasis",
+    location: "24 Brooklyn St.",
     slug: "urban-oasis",
-    image: ["media/property-2.jpg"], 
-    tipe_rumah: [{ sqft: 2800, bedrooms: 6, bathrooms: 4 }] 
+    image: ["media/property-2.jpg"],
+    tipe_rumah: [{ sqft: 2800, bedrooms: 6, bathrooms: 4 }]
   },
-  { 
-    id: "3", 
-    name: "White Haven", 
-    location: "Oak Lane", 
+  {
+    id: "3",
+    name: "White Haven",
+    location: "Oak Lane",
     slug: "white-haven",
-    image: ["media/property-3.jpg"], 
-    tipe_rumah: [{ sqft: 4500, bedrooms: 6, bathrooms: 5 }] 
+    image: ["media/property-3.jpg"],
+    tipe_rumah: [{ sqft: 4500, bedrooms: 6, bathrooms: 5 }]
   }
 ];
 
@@ -99,6 +99,12 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
 
   // Ambil data untuk Featured Residence
   const featured = properties[0] || ALL_PROPERTIES_SYNCED[0];
+  const featuredImageRaw = featured.image?.[0] ?? '';
+  const featuredImage = featuredImageRaw
+    ? (featuredImageRaw.startsWith('http://') || featuredImageRaw.startsWith('https://') || featuredImageRaw.startsWith('/storage/')
+      ? featuredImageRaw
+      : `/storage/${featuredImageRaw.replace(/^\/+/, '')}`)
+    : '/storage/media/property-1.jpg';
 
   return (
     <div className="min-h-screen bg-background">
@@ -109,9 +115,8 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
-            }`}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
           >
             <img
               src={slide.image_url || "/storage/media/property-hero.jpg"}
@@ -133,12 +138,12 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
 
         {slides.length > 1 && (
           <div className="absolute inset-0 z-30 flex items-center justify-between px-4">
-             <button onClick={goToPrev} className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all">
-                <ChevronLeft className="size-6" />
-             </button>
-             <button onClick={goToNext} className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all">
-                <ChevronRight className="size-6" />
-             </button>
+            <button onClick={goToPrev} className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all">
+              <ChevronLeft className="size-6" />
+            </button>
+            <button onClick={goToNext} className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all">
+              <ChevronRight className="size-6" />
+            </button>
           </div>
         )}
       </section>
@@ -152,7 +157,7 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
           >
             <div className="relative h-[300px] sm:h-[380px]">
               <img
-                src={featured.image?.[0] ? `/storage/${featured.image[0]}` : "/storage/media/property-1.jpg"}
+                src={featuredImage}
                 alt={featured.name}
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -188,8 +193,8 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
           </div>
         </section>
 
-        <EventsSection 
-          title={eventBlock?.data?.title} 
+        <EventsSection
+          title={eventBlock?.data?.title}
           ctaLabel={eventBlock?.data?.cta_label}
           ctaUrl={eventBlock?.data?.cta_url}
         />
