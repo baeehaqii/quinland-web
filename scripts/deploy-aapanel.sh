@@ -1,33 +1,61 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export HOME="${HOME:-/root}"
+export COMPOSER_HOME="${COMPOSER_HOME:-/root/.composer}"
+export COMPOSER_ALLOW_SUPERUSER=1
+
 APP_DIR="/www/wwwroot/quinland.findy.my.id"
+BRANCH="${BRANCH:-main}"
+WEB_USER="${WEB_USER:-www}"
+WEB_GROUP="${WEB_GROUP:-www}"
+
+if ! getent passwd "$WEB_USER" >/dev/null 2>&1; then
+  WEB_USER="www-data"
+fi
+
+if ! getent group "$WEB_GROUP" >/dev/null 2>&1; then
+  WEB_GROUP="www-data"
+fi
+
+PHP_BIN="$(command -v php || echo /usr/bin/php)"
+COMPOSER_BIN="$(command -v composer || echo /www/server/php/bin/composer)"
 
 cd "$APP_DIR"
 
-echo "[deploy] Starting deployment in $APP_DIR"
+echo "[deploy] Start in: $APP_DIR"
+echo "[deploy] Branch: $BRANCH"
 
-# Ensure required Laravel directories are writable by current web user.
-mkdir -p storage bootstrap/cache
+# Force code to exactly match target branch from origin.
+git fetch origin "$BRANCH"
+git reset --hard "origin/$BRANCH"
+git clean -fd
 
-# Install PHP dependencies for production.
-composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+echo "[deploy] Deployed commit: $(git rev-parse --short HEAD)"
 
-# Build frontend assets only when npm is available on the server.
+# Install/update PHP dependencies.
+"$PHP_BIN" "$COMPOSER_BIN" install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+
+# Build frontend assets when npm exists.
 if command -v npm >/dev/null 2>&1; then
   npm ci --no-audit --no-fund
   npm run build
 else
-  echo "[deploy] npm not found, skipping frontend build"
+  echo "[deploy] npm not found, skip build"
 fi
 
-# Laravel post-deploy tasks.
-php artisan storage:link || true
-php artisan migrate --force
-php artisan optimize:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan queue:restart || true
+# Laravel deploy steps.
+"$PHP_BIN" artisan storage:link || true
+"$PHP_BIN" artisan migrate --force
+"$PHP_BIN" artisan config:cache
+"$PHP_BIN" artisan route:cache
+"$PHP_BIN" artisan view:cache
+"$PHP_BIN" artisan icons:cache || true
+"$PHP_BIN" artisan filament:cache-components || true
+"$PHP_BIN" artisan queue:restart || true
 
-echo "[deploy] Deployment completed successfully"
+# Permissions.
+chown -R "$WEB_USER":"$WEB_GROUP" . || true
+chmod -R 755 storage bootstrap/cache || true
+
+echo "[deploy] Deployment selesai"
