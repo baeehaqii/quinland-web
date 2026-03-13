@@ -88,7 +88,7 @@ class PageForm
                                     ->schema([
                                         TextInput::make('title')
                                             ->label('Section Title')
-                                            ->default('Meet Our Partners')
+                                            ->default('Meet Our Partnerss')
                                             ->required(),
                                         Textarea::make('description')
                                             ->label('Section Description')
