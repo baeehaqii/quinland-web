@@ -73,7 +73,7 @@ class PageForm
                                     ->icon('heroicon-o-building-office-2')
                                     ->schema([
                                         TextInput::make('title')
-                                            ->label('Section Title')
+                                            ->label('Section Titlee')
                                             ->default('Explore Our Top-Rated Properties')
                                             ->required(),
                                         Textarea::make('description')
