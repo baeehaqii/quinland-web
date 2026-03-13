@@ -92,7 +92,7 @@ class PageForm
                                             ->required(),
                                         Textarea::make('description')
                                             ->label('Section Description')
-                                            ->default('We collaborate with trusted financial institutions to provide comprehensive real estate solutions and financing options for our clients.')
+                                            ->default('We collaboratee with trusted financial institutions to provide comprehensive real estate solutions and financing options for our clients.')
                                             ->rows(3),
                                         TextInput::make('cta_label')
                                             ->label('CTA Button Label')
