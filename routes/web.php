@@ -1,19 +1,8 @@
 <?php
 
+use App\Support\Curator\MediaHelper;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-if (!function_exists('curator_media_url')) {
-    function curator_media_url(string $name, string $fallback): string
-    {
-        $media = \Awcodes\Curator\Models\Media::query()
-            ->where('name', $name)
-            ->latest('id')
-            ->first();
-
-        return $media ? '/storage/' . ltrim((string) $media->path, '/') : $fallback;
-    }
-}
 
 Route::get('/', function () {
     $page = \App\Models\Page::where('slug', 'home')->where('is_active', true)->first();
@@ -36,20 +25,20 @@ Route::get('/', function () {
     return Inertia::render('welcome', [
         'page' => $page,
         'media' => [
-            'hero_bg_1' => curator_media_url('hero-bg', '/storage/media/hero-bg.jpg'),
-            'hero_bg_2' => curator_media_url('hero-bg-2', '/storage/media/hero-bg-2.jpg'),
-            'hero_bg_3' => curator_media_url('hero-bg-3', '/storage/media/hero-bg-3.jpg'),
-            'about_cover' => curator_media_url('about-team', '/storage/media/about-team.jpg'),
-            'event_1' => curator_media_url('event-1', '/storage/media/event-1.jpg'),
-            'event_2' => curator_media_url('event-2', '/storage/media/event-2.jpg'),
-            'event_3' => curator_media_url('event-3', '/storage/media/event-3.jpg'),
-            'blog_1' => curator_media_url('blog-1', '/storage/media/blog-1.jpg'),
-            'blog_2' => curator_media_url('blog-2', '/storage/media/blog-2.jpg'),
-            'blog_3' => curator_media_url('blog-3', '/storage/media/blog-3.jpg'),
-            'blog_4' => curator_media_url('blog-4', '/storage/media/blog-4.jpg'),
-            'property_1' => curator_media_url('property-1', '/storage/media/property-1.jpg'),
-            'property_2' => curator_media_url('property-2', '/storage/media/property-2.jpg'),
-            'property_3' => curator_media_url('property-3', '/storage/media/property-3.jpg'),
+            'hero_bg_1' => MediaHelper::url('hero-bg', '/storage/media/hero-bg.jpg'),
+            'hero_bg_2' => MediaHelper::url('hero-bg-2', '/storage/media/hero-bg-2.jpg'),
+            'hero_bg_3' => MediaHelper::url('hero-bg-3', '/storage/media/hero-bg-3.jpg'),
+            'about_cover' => MediaHelper::url('about-team', '/storage/media/about-team.jpg'),
+            'event_1' => MediaHelper::url('event-1', '/storage/media/event-1.jpg'),
+            'event_2' => MediaHelper::url('event-2', '/storage/media/event-2.jpg'),
+            'event_3' => MediaHelper::url('event-3', '/storage/media/event-3.jpg'),
+            'blog_1' => MediaHelper::url('blog-1', '/storage/media/blog-1.jpg'),
+            'blog_2' => MediaHelper::url('blog-2', '/storage/media/blog-2.jpg'),
+            'blog_3' => MediaHelper::url('blog-3', '/storage/media/blog-3.jpg'),
+            'blog_4' => MediaHelper::url('blog-4', '/storage/media/blog-4.jpg'),
+            'property_1' => MediaHelper::url('property-1', '/storage/media/property-1.jpg'),
+            'property_2' => MediaHelper::url('property-2', '/storage/media/property-2.jpg'),
+            'property_3' => MediaHelper::url('property-3', '/storage/media/property-3.jpg'),
         ],
     ]);
 })->name('home');
@@ -246,14 +235,14 @@ Route::get('/property/{slug}', function () {
 Route::get('/event-csr', function () {
     return Inertia::render('EventCsr', [
         'media' => [
-            'event_csr_hero' => curator_media_url('event-csr-hero', '/storage/media/event-csr-hero.jpg'),
-            'csr_1' => curator_media_url('csr-1', '/storage/media/csr-1.jpg'),
-            'csr_2' => curator_media_url('csr-2', '/storage/media/csr-2.jpg'),
-            'csr_3' => curator_media_url('csr-3', '/storage/media/csr-3.jpg'),
-            'csr_4' => curator_media_url('csr-4', '/storage/media/csr-4.jpg'),
-            'event_1' => curator_media_url('event-1', '/storage/media/event-1.jpg'),
-            'event_2' => curator_media_url('event-2', '/storage/media/event-2.jpg'),
-            'event_3' => curator_media_url('event-3', '/storage/media/event-3.jpg'),
+            'event_csr_hero' => MediaHelper::url('event-csr-hero', '/storage/media/event-csr-hero.jpg'),
+            'csr_1' => MediaHelper::url('csr-1', '/storage/media/csr-1.jpg'),
+            'csr_2' => MediaHelper::url('csr-2', '/storage/media/csr-2.jpg'),
+            'csr_3' => MediaHelper::url('csr-3', '/storage/media/csr-3.jpg'),
+            'csr_4' => MediaHelper::url('csr-4', '/storage/media/csr-4.jpg'),
+            'event_1' => MediaHelper::url('event-1', '/storage/media/event-1.jpg'),
+            'event_2' => MediaHelper::url('event-2', '/storage/media/event-2.jpg'),
+            'event_3' => MediaHelper::url('event-3', '/storage/media/event-3.jpg'),
         ],
     ]);
 })->name('event-csr.index');
@@ -261,12 +250,12 @@ Route::get('/event-csr', function () {
 Route::get('/about', function () {
     return Inertia::render('About', [
         'media' => [
-            'about_hero' => curator_media_url('about-hero', '/storage/media/about-hero.jpg'),
-            'about_team' => curator_media_url('about-team', '/storage/media/about-team.jpg'),
-            'office' => curator_media_url('office', '/storage/media/office.jpg'),
-            'property_1' => curator_media_url('property-1', '/storage/media/property-1.jpg'),
-            'property_2' => curator_media_url('property-2', '/storage/media/property-2.jpg'),
-            'property_3' => curator_media_url('property-3', '/storage/media/property-3.jpg'),
+            'about_hero' => MediaHelper::url('about-hero', '/storage/media/about-hero.jpg'),
+            'about_team' => MediaHelper::url('about-team', '/storage/media/about-team.jpg'),
+            'office' => MediaHelper::url('office', '/storage/media/office.jpg'),
+            'property_1' => MediaHelper::url('property-1', '/storage/media/property-1.jpg'),
+            'property_2' => MediaHelper::url('property-2', '/storage/media/property-2.jpg'),
+            'property_3' => MediaHelper::url('property-3', '/storage/media/property-3.jpg'),
         ],
     ]);
 })->name('about.index');
@@ -274,10 +263,10 @@ Route::get('/about', function () {
 Route::get('/artikel', function () {
     return Inertia::render('Artikel', [
         'media' => [
-            'blog_1' => curator_media_url('blog-1', '/storage/media/blog-1.jpg'),
-            'blog_2' => curator_media_url('blog-2', '/storage/media/blog-2.jpg'),
-            'blog_3' => curator_media_url('blog-3', '/storage/media/blog-3.jpg'),
-            'blog_4' => curator_media_url('blog-4', '/storage/media/blog-4.jpg'),
+            'blog_1' => MediaHelper::url('blog-1', '/storage/media/blog-1.jpg'),
+            'blog_2' => MediaHelper::url('blog-2', '/storage/media/blog-2.jpg'),
+            'blog_3' => MediaHelper::url('blog-3', '/storage/media/blog-3.jpg'),
+            'blog_4' => MediaHelper::url('blog-4', '/storage/media/blog-4.jpg'),
         ],
     ]);
 })->name('artikel.index');
