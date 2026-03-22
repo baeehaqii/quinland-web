@@ -58,7 +58,7 @@ class MenuForm
                                     ->default('_self')
                                     ->columnSpan(1),
                                 \Filament\Forms\Components\Toggle::make('is_button')
-                                    ->label('As Button')
+                                    ->label('As Buttonn')
                                     ->default(false)
                                     ->columnSpan(1),
 
