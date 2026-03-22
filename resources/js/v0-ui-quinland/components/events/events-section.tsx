@@ -46,12 +46,18 @@ export function EventsSection({
 }: EventsSectionProps) {
   const { props } = usePage<any>()
   const media = props.media || {}
+  
+  // Ambil events dari backend jika ada
+  let events = props.events || []
 
-  const events = [
-    { ...EVENTS[0], image: resolveMediaUrl(media.event_1, EVENTS[0].image) },
-    { ...EVENTS[1], image: resolveMediaUrl(media.event_2, EVENTS[1].image) },
-    { ...EVENTS[2], image: resolveMediaUrl(media.event_3, EVENTS[2].image) },
-  ]
+  // Fallback data dummy
+  if (events.length === 0) {
+      events = [
+        { ...EVENTS[0], image: resolveMediaUrl(media.event_1, EVENTS[0].image) },
+        { ...EVENTS[1], image: resolveMediaUrl(media.event_2, EVENTS[1].image) },
+        { ...EVENTS[2], image: resolveMediaUrl(media.event_3, EVENTS[2].image) },
+      ]
+  }
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -71,10 +77,11 @@ export function EventsSection({
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {events.map((event) => (
-          <article
+        {events.map((event: any) => (
+          <Link
+            href={`/event-csr/event/${event.slug || event.id}`}
             key={event.id}
-            className="group flex flex-col overflow-hidden rounded-2xl bg-card shadow-sm transition-shadow hover:shadow-md"
+            className="group flex flex-col overflow-hidden rounded-2xl bg-card shadow-sm transition-shadow hover:shadow-md block"
           >
             {/* Event Image */}
             <div className="relative aspect-[4/3] overflow-hidden">
@@ -101,7 +108,7 @@ export function EventsSection({
                 <time dateTime={event.date}>{event.date}</time>
               </div>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </section>

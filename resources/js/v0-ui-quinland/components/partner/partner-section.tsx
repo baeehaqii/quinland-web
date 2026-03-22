@@ -1,6 +1,6 @@
 "use client"
 
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 const PARTNERS = [
   {
@@ -34,6 +34,9 @@ const PARTNERS = [
 ]
 
 export function PartnerSection() {
+  const { props } = usePage<any>()
+  const partnerItems = props.partners?.length > 0 ? props.partners : PARTNERS;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
@@ -62,7 +65,7 @@ export function PartnerSection() {
           {/* First row - scroll right to left */}
           <div className="relative flex overflow-hidden">
             <div className="flex animate-marquee-left gap-6">
-              {[...PARTNERS, ...PARTNERS].map((partner, index) => (
+              {[...partnerItems, ...partnerItems].map((partner: any, index: number) => (
                 <div
                   key={`left-${index}`}
                   className="flex h-32 w-32 shrink-0 items-center justify-center rounded-2xl border border-border bg-white p-4 shadow-sm"
@@ -82,7 +85,7 @@ export function PartnerSection() {
           {/* Second row - scroll left to right */}
           <div className="relative flex overflow-hidden">
             <div className="flex animate-marquee-right gap-6">
-              {[...PARTNERS, ...PARTNERS].map((partner, index) => (
+              {[...partnerItems, ...partnerItems].map((partner: any, index: number) => (
                 <div
                   key={`right-${index}`}
                   className="flex h-32 w-32 shrink-0 items-center justify-center rounded-2xl border border-border bg-white p-4 shadow-sm"

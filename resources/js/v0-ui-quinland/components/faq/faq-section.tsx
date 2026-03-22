@@ -35,7 +35,12 @@ const FAQS = [
   },
 ]
 
+import { usePage } from '@inertiajs/react'
+
 export function FaqSection() {
+  const { props } = usePage<any>()
+  const faqsItems = props.faqs?.length > 0 ? props.faqs : FAQS;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div className="grid gap-12 lg:grid-cols-5 lg:gap-16">
@@ -53,7 +58,7 @@ export function FaqSection() {
         {/* Right Column - Accordion */}
         <div className="lg:col-span-3">
           <Accordion type="single" collapsible defaultValue="item-0">
-            {FAQS.map((faq, index) => (
+            {faqsItems.map((faq: any, index: number) => (
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
@@ -63,7 +68,7 @@ export function FaqSection() {
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6 pt-0 text-sm leading-relaxed sm:px-8 sm:text-base data-[state=open]:text-background/90">
-                  {faq.answer}
+                  <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
                 </AccordionContent>
               </AccordionItem>
             ))}

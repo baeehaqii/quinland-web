@@ -130,6 +130,10 @@ class PageForm
                                             ->label('Section Title')
                                             ->default('Special Events')
                                             ->required(),
+                                        Textarea::make('description')
+                                            ->label('Section Description')
+                                            ->default('Discover our upcoming special events and programs.')
+                                            ->rows(3),
                                         TextInput::make('cta_label')
                                             ->label('CTA Button Label')
                                             ->default('See All')
@@ -138,6 +142,44 @@ class PageForm
                                             ->label('CTA Button URL')
                                             ->default('/events')
                                             ->nullable(),
+                                    ]),
+
+                                \Filament\Forms\Components\Builder\Block::make('csr')
+                                    ->label('CSR Section')
+                                    ->icon('heroicon-o-heart')
+                                    ->schema([
+                                        TextInput::make('title')
+                                            ->label('Section Title')
+                                            ->default('Corporate Social Responsibility')
+                                            ->required(),
+                                        Textarea::make('description')
+                                            ->label('Section Description')
+                                            ->default('Quinland Grup percaya bahwa pembangunan yang berkelanjutan tidak hanya soal properti, tetapi juga tentang membangun kehidupan yang lebih baik bagi masyarakat sekitar.')
+                                            ->rows(3),
+                                        TextInput::make('cta_label')
+                                            ->label('CTA Button Label')
+                                            ->default('See All')
+                                            ->nullable(),
+                                        TextInput::make('cta_url')
+                                            ->label('CTA Button URL')
+                                            ->default('/csr')
+                                            ->nullable(),
+                                    ]),
+
+                                \Filament\Forms\Components\Builder\Block::make('page_hero')
+                                    ->label('Page Hero Section')
+                                    ->icon('heroicon-o-photo')
+                                    ->schema([
+                                        \Awcodes\Curator\Components\Forms\CuratorPicker::make('image_id')
+                                            ->label('Background Image')
+                                            ->required(),
+                                        TextInput::make('title')
+                                            ->label('Title')
+                                            ->required(),
+                                        Textarea::make('description')
+                                            ->label('Description')
+                                            ->rows(3)
+                                            ->required(),
                                     ]),
                             ])
                             ->collapsible()

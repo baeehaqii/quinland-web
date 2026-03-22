@@ -55,6 +55,30 @@ class HandleInertiaRequests extends Middleware
                     ? Storage::disk('public')->url($settings->site_logo)
                     : null,
             ],
+            'events' => fn () => \App\Models\Event::where('is_published', true)->orderBy('event_date', 'asc')->get()->map(function($event) {
+                return [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'description' => $event->description,
+                    'date' => $event->event_date ? $event->event_date->format('d M Y') : '-',
+                    'image' => $event->image ? '/storage/' . $event->image : null,
+                ];
+            }),
+            'faqs' => fn () => \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get()->map(function($faq) {
+                return [
+                    'id' => $faq->id,
+                    'question' => $faq->question,
+                    'answer' => $faq->answer,
+                ];
+            }),
+            'partners' => fn () => \App\Models\Partner::where('is_active', true)->orderBy('sort_order')->get()->map(function($partner) {
+                return [
+                    'id' => $partner->id,
+                    'name' => $partner->name,
+                    'logo' => $partner->logo ? '/storage/' . $partner->logo : null,
+                    'website_url' => $partner->website_url,
+                ];
+            }),
         ];
     }
 }

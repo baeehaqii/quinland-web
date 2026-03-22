@@ -18,7 +18,9 @@ class UnitBisnisResource extends Resource
 {
     protected static ?string $model = UnitBisnis::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+
+    protected static \UnitEnum|string|null $navigationGroup = 'Master Data';
 
     public static function form(Schema $schema): Schema
     {

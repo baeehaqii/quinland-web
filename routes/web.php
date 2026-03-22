@@ -244,6 +244,16 @@ Route::get('/event-csr', function () {
             'event_2' => MediaHelper::url('event-2', '/storage/media/event-2.jpg'),
             'event_3' => MediaHelper::url('event-3', '/storage/media/event-3.jpg'),
         ],
+        'csrs' => \App\Models\Csr::where('is_published', true)->orderBy('date', 'desc')->get()->map(function($csr) {
+            return [
+                'id' => $csr->id,
+                'title' => $csr->title,
+                'description' => $csr->description,
+                'image' => $csr->image ? '/storage/' . ltrim($csr->image, '/') : null,
+                'date' => $csr->date ? $csr->date->format('M Y') : 'Ongoing',
+                'category' => 'Program CSR'
+            ];
+        })
     ]);
 })->name('event-csr.index');
 
@@ -270,5 +280,144 @@ Route::get('/artikel', function () {
         ],
     ]);
 })->name('artikel.index');
+
+Route::get('/event-csr/{type}/{slug}', function ($type, $slug) {
+    if ($type === 'event') {
+        $model = \App\Models\Event::where('slug', $slug)->first();
+        if ($model) {
+            $latest = \App\Models\Event::where('is_published', true)->where('id', '!=', $model->id)->latest('event_date')->limit(3)->get();
+            $item = [
+                'id' => $model->id,
+                'title' => $model->title,
+                'description' => $model->description,
+                'content' => $model->content,
+                'image' => $model->image ? '/storage/' . ltrim($model->image, '/') : null,
+                'date' => $model->event_date ? $model->event_date->format('M d, Y') : '-',
+                'category' => 'Event',
+                'slug' => $model->slug
+            ];
+            $latestItems = $latest->map(function($m) {
+                return [
+                    'id' => $m->id,
+                    'title' => $m->title,
+                    'description' => $m->description,
+                    'image' => $m->image ? '/storage/' . ltrim($m->image, '/') : null,
+                    'date' => $m->event_date ? $m->event_date->format('M d, Y') : '-',
+                    'category' => 'Event',
+                    'slug' => $m->slug
+                ];
+            })->toArray();
+        } else {
+            // Dummy Fallback
+            $dummyEvents = [
+                ['id' => 1, 'title' => "BCA Expoversary", 'description' => "Temukan promo eksklusif Sinar Mas Land di BCA Expoversary 2026. Dapatkan diskon, DP ringan, bunga rendah, dan hadiah menarik untuk properti impian Anda.", 'image' => "/storage/media/event-1.jpg", 'date' => "28 Feb 2026", 'category' => 'Event', 'slug' => "1", 'content' => '<p>Temukan promo eksklusif Sinar Mas Land di BCA Expoversary 2026. Dapatkan diskon, DP ringan, bunga rendah, dan hadiah menarik untuk properti impian Anda.</p>'],
+                ['id' => 2, 'title' => "BRI Expo", 'description' => "Temukan properti impian lebih mudah di BRI Expo 2025. Sinar Mas Land hadir dengan kemudahan dan promo menarik untuk hunian keluarga Anda.", 'image' => "/storage/media/event-2.jpg", 'date' => "31 Agt 2025", 'category' => 'Event', 'slug' => "2", 'content' => '<p>Temukan properti impian lebih mudah di BRI Expo 2025. Sinar Mas Land hadir dengan kemudahan dan promo menarik untuk hunian keluarga Anda.</p>'],
+                ['id' => 3, 'title' => "BNI EXPO", 'description' => "Temukan hunian impian di BNI wondrX 2025 bersama Sinar Mas Land. Nikmati promo eksklusif, bunga rendah, cashback, dan lucky draw menarik!", 'image' => "/storage/media/event-3.jpg", 'date' => "17 Agt 2025", 'category' => 'Event', 'slug' => "3", 'content' => '<p>Temukan hunian impian di BNI wondrX 2025 bersama Sinar Mas Land. Nikmati promo eksklusif, bunga rendah, cashback, dan lucky draw menarik!</p>']
+            ];
+            $item = collect($dummyEvents)->filter(fn($e) => (string)$e['id'] === $slug || $e['slug'] === $slug)->first();
+            if (!$item) abort(404);
+            $latestItems = collect($dummyEvents)->where('id', '!=', $item['id'])->take(3)->values()->toArray();
+        }
+    } else {
+        $model = \App\Models\Csr::where('slug', $slug)->first();
+        if ($model) {
+            $latest = \App\Models\Csr::where('is_published', true)->where('id', '!=', $model->id)->latest('date')->limit(3)->get();
+            $item = [
+                'id' => $model->id,
+                'title' => $model->title,
+                'description' => $model->description,
+                'content' => $model->content,
+                'image' => $model->image ? '/storage/' . ltrim($model->image, '/') : null,
+                'date' => $model->date ? $model->date->format('M Y') : 'Ongoing',
+                'category' => 'CSR',
+                'slug' => $model->slug
+            ];
+            $latestItems = $latest->map(function($m) {
+                return [
+                    'id' => $m->id,
+                    'title' => $m->title,
+                    'description' => $m->description,
+                    'image' => $m->image ? '/storage/' . ltrim($m->image, '/') : null,
+                    'date' => $m->date ? $m->date->format('M Y') : 'Ongoing',
+                    'category' => 'CSR',
+                    'slug' => $m->slug
+                ];
+            })->toArray();
+        } else {
+            // Dummy Fallback
+            $dummyCsrs = [
+                ['id' => 1, 'title' => "Rumah untuk Semua", 'description' => "Program pembangunan rumah layak huni bagi keluarga kurang mampu di berbagai wilayah Indonesia.", 'image' => "/storage/media/csr-1.jpg", 'category' => "Housing", 'date' => "Ongoing", 'slug' => "1", 'content' => '<p>Program pembangunan rumah layak huni bagi keluarga kurang mampu di berbagai wilayah Indonesia. Bersama relawan dan mitra, kami membantu mewujudkan hunian yang aman dan nyaman.</p>'],
+                ['id' => 2, 'title' => "Quinland Green Initiative", 'description' => "Inisiatif penanaman 10.000 pohon di kawasan perumahan dan area publik untuk menciptakan lingkungan hijau.", 'image' => "/storage/media/csr-2.jpg", 'category' => "Lingkungan", 'date' => "Jan - Des 2026", 'slug' => "2", 'content' => '<p>Inisiatif penanaman 10.000 pohon di kawasan perumahan dan area publik untuk menciptakan lingkungan hijau yang berkelanjutan bagi generasi mendatang.</p>'],
+                ['id' => 3, 'title' => "Beasiswa Pendidikan Anak Bangsa", 'description' => "Program beasiswa pendidikan bagi anak-anak berprestasi dari keluarga prasejahtera.", 'image' => "/storage/media/csr-3.jpg", 'category' => "Pendidikan", 'date' => "Tahun Ajaran 2026", 'slug' => "3", 'content' => '<p>Program beasiswa pendidikan bagi anak-anak berprestasi dari keluarga prasejahtera di sekitar kawasan pengembangan Quinland Grup.</p>'],
+                ['id' => 4, 'title' => "Layanan Kesehatan Masyarakat", 'description' => "Kegiatan pemeriksaan kesehatan gratis dan penyuluhan gizi untuk warga di sekitar proyek pengembangan.", 'image' => "/storage/media/csr-4.jpg", 'category' => "Kesehatan", 'date' => "Quarterly", 'slug' => "4", 'content' => '<p>Kegiatan pemeriksaan kesehatan gratis dan penyuluhan gizi untuk warga di sekitar proyek pengembangan, bekerja sama dengan rumah sakit dan tenaga medis profesional.</p>']
+            ];
+            $item = collect($dummyCsrs)->filter(fn($c) => (string)$c['id'] === $slug || $c['slug'] === $slug)->first();
+            if (!$item) abort(404);
+            $latestItems = collect($dummyCsrs)->where('id', '!=', $item['id'])->take(3)->values()->toArray();
+        }
+    }
+
+    return Inertia::render('EventCsrDetail', [
+        'item' => $item,
+        'latestItems' => $latestItems,
+        'type' => $type,
+        'media' => [
+            'event_csr_hero' => MediaHelper::url('event-csr-hero', '/storage/media/event-csr-hero.jpg'),
+        ]
+    ]);
+})->name('event-csr.show');
+
+Route::get('/artikel/{slug}', function ($slug) {
+    $model = \App\Models\BlogPost::where('slug', $slug)->published()->first();
+    
+    if ($model) {
+        $item = [
+            'id' => $model->id,
+            'title' => $model->title,
+            'excerpt' => $model->excerpt,
+            'content' => $model->content,
+            'image' => $model->image ? (str_starts_with($model->image, 'http') ? $model->image : '/storage/' . ltrim($model->image, '/')) : null,
+            'date' => $model->published_at ? $model->published_at->format('d M Y') : $model->created_at->format('d M Y'),
+            'category' => $model->category?->name ?: 'Blog',
+            'slug' => $model->slug
+        ];
+        
+        $latest = \App\Models\BlogPost::published()
+            ->where('id', '!=', $model->id)
+            ->latest('published_at')
+            ->limit(3)
+            ->get();
+            
+        $latestItems = $latest->map(function($m) {
+            return [
+                'id' => $m->id,
+                'title' => $m->title,
+                'image' => $m->image ? (str_starts_with($m->image, 'http') ? $m->image : '/storage/' . ltrim($m->image, '/')) : null,
+                'date' => $m->published_at ? $m->published_at->format('d M Y') : $m->created_at->format('d M Y'),
+                'slug' => $m->slug
+            ];
+        })->toArray();
+    } else {
+        // Dummy Fallback
+        $dummyArticles = [
+            ['id' => 1, 'title' => "Rumah Dijual di Tangerang untuk Keluarga Nyaman & Aman", 'excerpt' => "Cari rumah dijual di Tangerang untuk keluarga?", 'image' => "/storage/media/blog-1.jpg", 'date' => "19 Feb 2026", 'category' => "Blog", 'slug' => '1', 'content' => '<p>Konten artikel lengkap tentang rumah di Tangerang...</p>'],
+            ['id' => 2, 'title' => "Amadeus Signature, Rumah di Bogor untuk Investasi Jangka Panjang", 'excerpt' => "Rumah di Bogor Amadeus Signature menawarkan desain premium...", 'image' => "/storage/media/blog-2.jpg", 'date' => "17 Feb 2026", 'category' => "Blog", 'slug' => '2', 'content' => '<p>Konten artikel lengkap tentang Amadeus Signature...</p>'],
+            ['id' => 3, 'title' => "Aerium Residence, Apartemen untuk Milenial, Pet Friendly & Modern", 'excerpt' => "Apartemen Jakarta Barat Aerium hadir dengan konsep pet-friendly...", 'image' => "/storage/media/blog-3.jpg", 'date' => "16 Feb 2026", 'category' => "Blog", 'slug' => '3', 'content' => '<p>Konten artikel lengkap tentang Aerium Residence...</p>'],
+            ['id' => 4, 'title' => "Tips Memilih Rumah Idaman dengan Budget Terbatas", 'excerpt' => "Panduan lengkap memilih rumah impian...", 'image' => "/storage/media/blog-4.jpg", 'date' => "15 Feb 2026", 'category' => "Tips", 'slug' => '4', 'content' => '<p>Konten artikel lengkap tentang tips memilih rumah...</p>'],
+        ];
+        
+        $item = collect($dummyArticles)->filter(fn($a) => (string)$a['id'] === $slug || $a['slug'] === $slug)->first();
+        if (!$item) abort(404);
+        $latestItems = collect($dummyArticles)->where('id', '!=', $item['id'])->take(3)->values()->toArray();
+    }
+
+    return Inertia::render('ArtikelDetail', [
+        'article' => $item,
+        'latestArticles' => $latestItems,
+        'media' => [
+            'artikel_hero' => MediaHelper::url('blog-1', '/storage/media/blog-1.jpg'),
+        ]
+    ]);
+})->name('artikel.show');
 
 Route::get('/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('pages.show');

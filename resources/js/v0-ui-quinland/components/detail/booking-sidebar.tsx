@@ -125,7 +125,7 @@ function ResendTimer({
 // Main component
 // ---------------------------------------------------------------------------
 interface BookingSidebarProps {
-  price: string
+  price?: string
 }
 
 export function BookingSidebar({ price }: BookingSidebarProps) {
@@ -176,12 +176,14 @@ export function BookingSidebar({ price }: BookingSidebarProps) {
     <>
       <aside className="sticky top-8 w-full lg:max-w-[320px]">
         {/* Price */}
-        <div className="mb-4">
-          <span className="text-sm font-semibold text-red-600">Starts From</span>
-          <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-            {price}
-          </p>
-        </div>
+        {price && (
+          <div className="mb-4">
+            <span className="text-sm font-semibold text-red-600">Starts From</span>
+            <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+              {price}
+            </p>
+          </div>
+        )}
 
         {/* Booking card */}
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">

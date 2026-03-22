@@ -65,9 +65,11 @@ export const metadata = {
 
 interface EventCsrPageProps {
   media?: Record<string, string>
+  csrs?: any[]
 }
 
-export default function EventCsrPage({ media = {} }: EventCsrPageProps) {
+export default function EventCsrPage({ media = {}, csrs = [] }: EventCsrPageProps) {
+  const csrItems = csrs.length > 0 ? csrs : CSR_PROGRAMS
   const heroImage = resolveMediaUrl(media.event_csr_hero, "/storage/media/event-csr-hero.jpg")
   const csrImages = [
     resolveMediaUrl(media.csr_1, "/storage/media/csr-1.jpg"),
@@ -138,12 +140,13 @@ export default function EventCsrPage({ media = {} }: EventCsrPageProps) {
 
             {/* CSR Cards Grid */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {CSR_PROGRAMS.map((program) => {
-                const Icon = program.icon
+              {csrItems.map((program: any) => {
+                const Icon = program.icon || HeartPulse
                 return (
-                  <article
+                  <Link
+                    href={`/event-csr/csr/${program.slug || program.id}`}
                     key={program.id}
-                    className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
+                    className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg block"
                   >
                     {/* Image */}
                     <div className="relative h-52 overflow-hidden">
@@ -182,7 +185,7 @@ export default function EventCsrPage({ media = {} }: EventCsrPageProps) {
                         </span>
                       </div>
                     </div>
-                  </article>
+                  </Link>
                 )
               })}
             </div>
