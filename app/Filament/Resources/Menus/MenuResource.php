@@ -13,16 +13,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class MenuResource extends Resource
 {
     protected static ?string $model = Menu::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Content';
+    protected static string | UnitEnum | null $navigationGroup = 'Content';
 
     public static function form(Schema $schema): Schema
     {

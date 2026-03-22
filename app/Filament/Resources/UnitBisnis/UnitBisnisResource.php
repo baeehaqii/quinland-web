@@ -13,14 +13,15 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class UnitBisnisResource extends Resource
 {
     protected static ?string $model = UnitBisnis::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Master Data';
+    protected static string | UnitEnum | null $navigationGroup = 'Master Data';
 
     public static function form(Schema $schema): Schema
     {
