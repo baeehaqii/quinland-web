@@ -40,6 +40,8 @@ Route::get('/', function () {
             'property_2' => MediaHelper::url('property-2', '/storage/media/property-2.jpg'),
             'property_3' => MediaHelper::url('property-3', '/storage/media/property-3.jpg'),
         ],
+        'faqs' => \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get(),
+        'partners' => \App\Models\Partner::where('is_active', true)->orderBy('sort_order')->get(),
     ]);
 })->name('home');
 
@@ -140,34 +142,21 @@ Route::get('/property', function () {
         ->values()
         ->all();
 
-    // Tampilkan data dummy jika data real belum ada di database
-    if (empty($properties)) {
-        $properties = [
-            [
-                'id' => 1,
-                'name' => 'Grand Quinland Residence',
-                'location' => 'Jakarta Selatan',
-                'slug' => 'grand-quinland-residence',
-                'image' => ['media/property-1.jpg'],
-                'tipe_rumah' => [['sqft' => 120, 'bedrooms' => 3, 'bathrooms' => 2]]
-            ],
-            [
-                'id' => 2,
-                'name' => 'Quinland Garden',
-                'location' => 'Bandung, Jawa Barat',
-                'slug' => 'quinland-garden',
-                'image' => ['media/property-2.jpg'],
-                'tipe_rumah' => [['sqft' => 90, 'bedrooms' => 2, 'bathrooms' => 1]]
-            ],
-            [
-                'id' => 3,
-                'name' => 'The Quinland Hills',
-                'location' => 'Bogor, Jawa Barat',
-                'slug' => 'the-quinland-hills',
-                'image' => ['media/property-3.jpg'],
-                'tipe_rumah' => [['sqft' => 150, 'bedrooms' => 4, 'bathrooms' => 3]]
-            ]
-        ];
+    // Removed dummy data fallback as requested
+
+    if ($page && is_array($page->content)) {
+        $content = $page->content;
+        foreach ($content as &$block) {
+            if ($block['type'] === 'hero' && isset($block['data']['slides'])) {
+                foreach ($block['data']['slides'] as &$slide) {
+                    if (isset($slide['image_id'])) {
+                        $media = \Awcodes\Curator\Models\Media::find($slide['image_id']);
+                        $slide['image_url'] = $media ? '/storage/' . $media->path : '/storage/media/property-hero.jpg';
+                    }
+                }
+            }
+        }
+        $page->content = $content;
     }
 
     return Inertia::render('Property', [
@@ -176,29 +165,43 @@ Route::get('/property', function () {
     ]);
 })->name('property.index');
 
-Route::get('/property/{slug}', function () {
-    $property = \App\Models\Property::query()
-        ->where('slug', request()->route('slug'))
-        ->firstOrFail();
+Route::get('/property/{slug}', function ($slug) {
+    $propertyModel = \App\Models\Property::query()
+        ->where('slug', $slug)
+        ->first();
 
-    $images = collect($property->gambar_utama ?? [])
-        ->filter(fn($path) => filled($path))
-        ->map(fn($path) => '/storage/' . ltrim((string) $path, '/'))
-        ->values()
-        ->all();
-
-    if (empty($images)) {
-        $images = \Awcodes\Curator\Models\Media::query()
-            ->latest('id')
-            ->limit(3)
-            ->pluck('path')
+    if ($propertyModel) {
+        $images = collect($propertyModel->gambar_utama ?? [])
+            ->filter(fn($path) => filled($path))
             ->map(fn($path) => '/storage/' . ltrim((string) $path, '/'))
             ->values()
             ->all();
+
+        if (empty($images)) {
+            $images = \Awcodes\Curator\Models\Media::query()
+                ->latest('id')
+                ->limit(3)
+                ->pluck('path')
+                ->map(fn($path) => '/storage/' . ltrim((string) $path, '/'))
+                ->values()
+                ->all();
+        }
+
+        $propertyData = [
+            'name' => $propertyModel->nama_property ?: 'Property ' . $propertyModel->id,
+            'slug' => $propertyModel->slug ?: \Illuminate\Support\Str::slug((string) ($propertyModel->nama_property ?: 'property-' . $propertyModel->id)),
+            'category' => $propertyModel->kategori,
+            'price' => $propertyModel->harga_mulai ? 'Rp ' . number_format((int) $propertyModel->harga_mulai, 0, ',', '.') : '-',
+            'images' => $images,
+            'description' => $propertyModel->deskripsi_property ?: 'Deskripsi properti belum tersedia.',
+        ];
+        $propertyId = $propertyModel->id;
+    } else {
+        abort(404);
     }
 
     $otherProperties = \App\Models\Property::query()
-        ->where('id', '!=', $property->id)
+        ->where('id', '!=', $propertyId)
         ->latest('id')
         ->limit(3)
         ->get()
@@ -219,15 +222,11 @@ Route::get('/property/{slug}', function () {
         ->values()
         ->all();
 
+    // Removed dummy other properties fallback
+    $otherProperties = collect($otherProperties)->filter(fn($o) => (string)$o['id'] !== (string)$propertyId)->values()->all();
+
     return Inertia::render('PropertyDetail', [
-        'property' => [
-            'name' => $property->nama_property ?: 'Property ' . $property->id,
-            'slug' => $property->slug ?: \Illuminate\Support\Str::slug((string) ($property->nama_property ?: 'property-' . $property->id)),
-            'category' => $property->kategori,
-            'price' => $property->harga_mulai ? 'Rp ' . number_format((int) $property->harga_mulai, 0, ',', '.') : '-',
-            'images' => $images,
-            'description' => $property->deskripsi_property ?: 'Deskripsi properti belum tersedia.',
-        ],
+        'property' => $propertyData,
         'otherProperties' => $otherProperties,
     ]);
 })->name('property.show');

@@ -34,7 +34,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const { url: pathname, props } = usePage<SharedProps>()
   const { settings, menu } = props
-  const siteName = settings?.site_name || "Quinland Grup"
+  const siteName = settings?.site_name || "Quinland"
   const siteLogo = settings?.site_logo || null
 
   const navItems: MenuItem[] = menu && menu.length > 0

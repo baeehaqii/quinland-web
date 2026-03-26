@@ -94,12 +94,12 @@ export function Footer() {
           {/* Logo and brand */}
           <Link href="/" className="flex items-center gap-3">
             <Building2 className="size-8 text-white" strokeWidth={1.5} />
-            <span className="text-xl font-bold">Quinland Grup</span>
+            <span className="text-xl font-bold">Quinland</span>
           </Link>
 
           {/* Copyright */}
           <p className="text-center text-sm text-zinc-400">
-            © 2026 Quinland Grup. All rights reserved.
+            © 2026 Quinland. All rights reserved.
           </p>
 
           {/* Social links */}

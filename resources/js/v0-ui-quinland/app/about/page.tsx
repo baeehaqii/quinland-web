@@ -11,7 +11,9 @@ import {
 } from "lucide-react"
 import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 import { Footer } from "@/v0-ui-quinland/components/layout/footer"
+import { usePage } from "@inertiajs/react"
 import { PropertyCard, type Property } from "@/v0-ui-quinland/components/properties/property-card"
+import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
 /* ────────────────────────── Static Data ────────────────────────── */
 
@@ -49,6 +51,19 @@ const PROPERTIES: Property[] = [
 ]
 
 export default function AboutPage() {
+  const { props } = usePage<any>()
+  const pageContent = props.page?.content || []
+  
+  // Extract blocks
+  const aboutSection = pageContent.find((block: any) => block.type === 'about_section')?.data || {}
+  const visionMission = pageContent.find((block: any) => block.type === 'vision_mission')?.data || {}
+  const officeSection = pageContent.find((block: any) => block.type === 'office_section')?.data || {}
+  const pageHero = pageContent.find((block: any) => block.type === 'page_hero')?.data || {}
+
+  const heroImage = pageHero?.image_id ? resolveMediaUrl(pageHero.image_id, "/storage/media/about-hero.jpg") : "/storage/media/about-hero.jpg"
+  const heroTitle = pageHero?.title || "Quinland"
+  const heroDesc = pageHero?.description || "Pengembang properti terpercaya yang menghadirkan hunian berkualitas untuk masyarakat Indonesia"
+
   return (
     <>
       <Navbar />
@@ -56,8 +71,8 @@ export default function AboutPage() {
         {/* ─── Hero Banner ─── */}
         <section className="relative flex h-[340px] items-end overflow-hidden sm:h-[400px]">
           <Image
-            src="/storage/media/about-hero.jpg"
-            alt="About Quinland Grup"
+            src={heroImage}
+            alt="About Quinland"
             fill
             className="object-cover"
             priority
@@ -78,10 +93,10 @@ export default function AboutPage() {
             </nav>
 
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              Quinland Grup
+              {heroTitle}
             </h1>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-white/80">
-              The largest and most diversified property developer in Indonesia
+              {heroDesc}
             </p>
           </div>
         </section>
@@ -92,41 +107,36 @@ export default function AboutPage() {
             {/* Left - Text */}
             <div>
               <span className="text-sm font-semibold uppercase tracking-widest text-emerald-700">
-                Tentang Kami
+                {aboutSection.title || "Tentang Kami"}
               </span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                Membangun Masa Depan, Menciptakan Kebahagiaan
+                {aboutSection.heading || "Membangun Masa Depan, Menciptakan Kebahagiaan"}
               </h2>
-              <p className="mt-6 leading-relaxed text-muted-foreground">
-                Quinland Grup adalah pengembang properti terkemuka di Indonesia
-                yang telah berpengalaman selama lebih dari 20 tahun dalam
-                membangun hunian berkualitas tinggi. Kami berkomitmen untuk
-                menghadirkan properti yang tidak hanya nyaman, tetapi juga
-                bernilai investasi tinggi.
+              <p className="mt-6 leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                {aboutSection.description_1 || "Quinland adalah perusahaan pengembang properti yang berkomitmen menghadirkan hunian berkualitas untuk masyarakat Indonesia. Sejak berdiri pada tahun 2022, Quinland terus berkembang dengan menghadirkan berbagai proyek perumahan yang dirancang tidak hanya sebagai tempat tinggal, tetapi juga sebagai aset masa depan."}
               </p>
-              <p className="mt-4 leading-relaxed text-muted-foreground">
-                Dengan portofolio yang mencakup perumahan, apartemen, dan
-                kawasan komersial di berbagai kota besar Indonesia, kami terus
-                berinovasi untuk memenuhi kebutuhan masyarakat modern akan
-                hunian yang berkualitas dan terjangkau.
-              </p>
+              {(aboutSection.description_2 || "Kami percaya bahwa setiap orang berhak memiliki rumah yang layak, nyaman, dan bernilai. Oleh karena itu, Quinland hadir dengan visi besar: menjadi developer properti terpercaya yang menghadirkan hunian berkualitas, inovatif, dan berkelanjutan bagi seluruh lapisan masyarakat.") && (
+                <p className="mt-4 leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                  {aboutSection.description_2 || "Kami percaya bahwa setiap orang berhak memiliki rumah yang layak, nyaman, dan bernilai. Oleh karena itu, Quinland hadir dengan visi besar: menjadi developer properti terpercaya yang menghadirkan hunian berkualitas, inovatif, dan berkelanjutan bagi seluruh lapisan masyarakat."}
+                </p>
+              )}
 
               {/* Stats */}
               <div className="mt-10 grid grid-cols-3 gap-6">
                 <div>
-                  <p className="text-3xl font-bold text-foreground">20+</p>
+                  <p className="text-3xl font-bold text-foreground">{aboutSection.stats_years || "4+"}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Tahun Pengalaman
                   </p>
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-foreground">150+</p>
+                  <p className="text-3xl font-bold text-foreground">{aboutSection.stats_projects || "5+"}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Project Selesai
+                    Project Perumahan
                   </p>
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-foreground">10K+</p>
+                  <p className="text-3xl font-bold text-foreground">{aboutSection.stats_families || "1K+"}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Keluarga Bahagia
                   </p>
@@ -137,8 +147,8 @@ export default function AboutPage() {
             {/* Right - Image */}
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/storage/media/about-team.jpg"
-                alt="Tim Quinland Grup"
+                src={aboutSection.image_id ? resolveMediaUrl(aboutSection.image_id, "/storage/media/about-team.jpg") : "/storage/media/about-team.jpg"}
+                alt="Tim Quinland"
                 width={640}
                 height={480}
                 className="h-[380px] w-full object-cover sm:h-[440px]"
@@ -152,10 +162,10 @@ export default function AboutPage() {
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <div className="mx-auto max-w-2xl text-center">
               <span className="text-sm font-semibold uppercase tracking-widest text-emerald-700">
-                Visi & Misi
+                {visionMission.section_subtitle || "Visi & Misi"}
               </span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                Landasan Kami Berkarya
+                {visionMission.section_heading || "Landasan Kami Berkarya"}
               </h2>
             </div>
 
@@ -166,13 +176,10 @@ export default function AboutPage() {
                   <Eye className="size-7 text-emerald-700" strokeWidth={1.5} />
                 </div>
                 <h3 className="mt-6 text-xl font-bold text-foreground">
-                  Visi Kami
+                  {visionMission.vision_title || "Visi Kami"}
                 </h3>
-                <p className="mt-3 leading-relaxed text-muted-foreground">
-                  Menjadi pengembang properti terdepan di Indonesia yang
-                  menghadirkan hunian berkualitas tinggi, berkelanjutan, dan
-                  terjangkau untuk seluruh lapisan masyarakat. Kami percaya
-                  setiap keluarga berhak memiliki rumah impian.
+                <p className="mt-3 leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                  {visionMission.vision_description || "Menjadi developer properti terpercaya yang menghadirkan hunian berkualitas, inovatif, dan berkelanjutan bagi seluruh lapisan masyarakat."}
                 </p>
               </div>
 
@@ -185,29 +192,32 @@ export default function AboutPage() {
                   />
                 </div>
                 <h3 className="mt-6 text-xl font-bold text-foreground">
-                  Misi Kami
+                  {visionMission.mission_title || "Misi Kami"}
                 </h3>
                 <ul className="mt-3 flex flex-col gap-3 leading-relaxed text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-emerald-600" />
-                    Mengembangkan kawasan hunian yang terintegrasi dengan
-                    fasilitas modern dan ramah lingkungan.
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-emerald-600" />
-                    Memberikan pelayanan terbaik kepada konsumen mulai dari
-                    proses pembelian hingga after-sales.
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-emerald-600" />
-                    Berinovasi dalam desain dan teknologi untuk menciptakan
-                    properti yang bernilai investasi tinggi.
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-emerald-600" />
-                    Berkontribusi dalam pembangunan infrastruktur dan ekonomi
-                    daerah di seluruh Indonesia.
-                  </li>
+                  {(visionMission.missions && visionMission.missions.length > 0) ? (
+                    visionMission.missions.map((mission: any, index: number) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-emerald-600" />
+                        <span><strong>{mission.title}</strong> - {mission.description}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <>
+                      <li className="flex items-start gap-2">
+                        <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-emerald-600" />
+                        <span><strong>Quality</strong> - Quinland Berkomitmen untuk menghadirkan produk perumahan yang berkualitas.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-emerald-600" />
+                        <span><strong>Inovation</strong> - Dalam Mengembangkan Produknya, kami mengedapankan inovasi yang menjadikan Unique Selling Point dari produk Perumahan Quinland.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-emerald-600" />
+                        <span><strong>Land</strong> - Lahan atau Tanah, sebagai tempat untuk Kami memulai membangun kehidupan yang lebih unggul.</span>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
             </div>
@@ -218,10 +228,10 @@ export default function AboutPage() {
         <section className="mx-auto max-w-7xl px-6 py-20 lg:px-10">
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-sm font-semibold uppercase tracking-widest text-emerald-700">
-              Kantor Kami
+              {officeSection.section_subtitle || "Kantor Kami"}
             </span>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Kunjungi Kantor Quinland Grup
+              {officeSection.section_heading || "Kunjungi Kantor Quinland"}
             </h2>
           </div>
 
@@ -229,8 +239,8 @@ export default function AboutPage() {
             {/* Office Image */}
             <div className="overflow-hidden rounded-2xl">
               <Image
-                src="/storage/media/office.jpg"
-                alt="Kantor Quinland Grup"
+                src={officeSection.image_id ? resolveMediaUrl(officeSection.image_id, "/storage/media/office.jpg") : "/storage/media/office.jpg"}
+                alt="Kantor Quinland"
                 width={640}
                 height={400}
                 className="h-[300px] w-full object-cover sm:h-[360px]"
@@ -240,7 +250,7 @@ export default function AboutPage() {
             {/* Office Details */}
             <div className="flex flex-col gap-6">
               <h3 className="text-2xl font-bold text-foreground">
-                Kantor Pusat - Jakarta
+                {officeSection.office_name || "Kantor Kami"}
               </h3>
 
               <div className="flex flex-col gap-4">
@@ -255,8 +265,8 @@ export default function AboutPage() {
                     <p className="text-sm font-semibold text-foreground">
                       Alamat
                     </p>
-                    <p className="mt-0.5 text-sm text-muted-foreground">
-                      Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan 12190
+                    <p className="mt-0.5 text-sm text-muted-foreground whitespace-pre-wrap">
+                      {officeSection.address || "Jl. Raya Kediri - Blitar, Setonorejo, Kec. Kras, Kabupaten Kediri, Jawa Timur 64172"}
                     </p>
                   </div>
                 </div>
@@ -273,7 +283,7 @@ export default function AboutPage() {
                       Telepon
                     </p>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      +62 21 5292 1888
+                      {officeSection.phone || "+62 812-3456-7890"}
                     </p>
                   </div>
                 </div>
@@ -290,7 +300,7 @@ export default function AboutPage() {
                       Email
                     </p>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      info@quinlandgrup.co.id
+                      {officeSection.email || "hello@quinland.co.id"}
                     </p>
                   </div>
                 </div>
@@ -307,7 +317,7 @@ export default function AboutPage() {
                       Jam Operasional
                     </p>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      Senin - Jumat, 08:00 - 17:00 WIB
+                      {officeSection.operational_hours || "Senin - Jumat, 08:00 - 17:00 WIB"}
                     </p>
                   </div>
                 </div>

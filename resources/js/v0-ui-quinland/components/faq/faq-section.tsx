@@ -9,29 +9,29 @@ import {
 
 const FAQS = [
   {
-    question: "How can I view a property I'm interested in?",
+    question: "Bagaimana Cara Membeli Rumah di Quinland?",
     answer:
-      "You can contact our agent to schedule a property viewing. We'll arrange a time that's convenient for both you and the property owner.",
+      "Anda dapat menghubungi nomer hotline Kami atau berinteraksi dengan marketing Kami langsung. Anda juga bisa mengunjungi kantor Marketing Kami.",
   },
   {
-    question: 'Does Realteek offer free consultations?',
+    question: 'Apa Saja Metode Pembayaran yang Tersedia?',
     answer:
-      'Yes, we offer free initial consultations to discuss your property needs and help you understand the buying or selling process.',
+      '<p><strong>KPR (Kredit Pemilikan Rumah)</strong> melalui Pembiayan Perbankan yang sudah bekerjasama dengan Kami</p><p><strong>Cash Keras</strong> : Metode pembayaran secara tunai ke developer dengan nominal 95% dibayar di awal dan 5% setelah Rumah jadi</p><p><strong>Cash Termin</strong> : Metode pembayaran secara tunai ke developer dengan nominal 50% dibayar di awal dan 50% Sisa dibayarkan bertahap selama 8 Bulan</p><p><strong>Cash Termin by Progress</strong> : Metode Pembayaran secara tunai ke developer dengan nominal 50% dibayar di awal, 45% setelah progrees Rumah selesai Atap, Dan 5% setelah Rumah jadi</p>',
   },
   {
-    question: 'How long does it take to sell a property?',
+    question: 'Apakah Ada Jaminan Pembangunan?',
     answer:
-      'The timeline varies depending on market conditions, property location, and pricing. On average, properties sell within 30-90 days with proper marketing.',
+      'Ya, kami berkomitmen menyelesaikan pembangunan sesuai perjanjian. Konsumen juga akan mendapatkan surat komitmen pembangunan dari developer.',
   },
   {
-    question: 'What is the process for buying property?',
+    question: 'Bagaimana jika Pengajuan KPR Ditolak?',
     answer:
-      'The process includes property search, viewing, offer submission, negotiation, due diligence, financing approval, and closing. Our agents guide you through each step.',
+      '<p>Tim kami akan membantu :</p><ol><li>Evaluasi Penyebab Penolakan</li><li>Pengajuan ulang ke Bank Lain</li><li>Alternatif Skema Pembayaran Lain</li></ol><p>Jika, semua alternatif telah dicoba dan KPR masih belum bisa disetujui, Uang muka yang telah dibayarkan akan Kami kembalikan 100% sesuai dengan S&K yang berlaku</p>',
   },
   {
-    question: 'How can I contact Realteek Real Estate?',
+    question: 'Apa saja dokumen legalitas yang akan didapatkan?',
     answer:
-      'You can reach us through our contact form, phone, or email. Our team is available Monday to Friday, 9 AM to 6 PM to assist with your inquiries.',
+      '<p>Seluruh konsumen Kami mendapatkan jaminan kepastian legalitas dengan dokumen yang akan diterima meliputi :</p><ol><li>Sertifikat Hak Milik atas nama Konsumen</li><li>Persetujuan Bangunan Gedung (PBG)</li><li>SPPT</li></ol>',
   },
 ]
 
@@ -40,6 +40,10 @@ import { usePage } from '@inertiajs/react'
 export function FaqSection() {
   const { props } = usePage<any>()
   const faqsItems = props.faqs?.length > 0 ? props.faqs : FAQS;
+  
+  // Extract dynamic headline from Page Builder content
+  const pageContent = props.page?.content || []
+  const faqBlock = pageContent.find((block: any) => block.type === 'faq')?.data || {}
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
@@ -47,11 +51,10 @@ export function FaqSection() {
         {/* Left Column - Heading */}
         <div className="lg:col-span-2">
           <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Frequently Asked Question
+            {faqBlock.title || "Pertanyaan Umum"}
           </h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Here are some common questions along with their answers to help
-            clear up any confusion.
+            {faqBlock.description || "Berikut Beberapa Pertanyaan Umum yang sering ditanyakan, Jika Anda masih belum menemukan jawaban disini, Anda bisa menghubungi nomer Hotline Kami"}
           </p>
         </div>
 

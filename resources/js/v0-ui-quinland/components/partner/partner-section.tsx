@@ -37,25 +37,27 @@ export function PartnerSection() {
   const { props } = usePage<any>()
   const partnerItems = props.partners?.length > 0 ? props.partners : PARTNERS;
 
+  // Extract dynamic headline from Page Builder content
+  const pageContent = props.page?.content || []
+  const partnerBlock = pageContent.find((block: any) => block.type === 'partners')?.data || {}
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Left side - Content */}
         <div className="flex flex-col justify-center space-y-6">
           <h2 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Meet Our Partners
+            {partnerBlock.title || "Meet Our Partners"}
           </h2>
           <p className="text-lg leading-relaxed text-muted-foreground">
-            We collaborate with trusted financial institutions to provide
-            comprehensive real estate solutions and financing options for our
-            clients.
+            {partnerBlock.description || "We collaborate with trusted financial institutions to provide comprehensive real estate solutions and financing options for our clients."}
           </p>
           <div>
             <Link
-              href="/partners"
+              href={partnerBlock.cta_url || "/partners"}
               className="inline-block rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
-              Learn More
+              {partnerBlock.cta_label || "Learn More"}
             </Link>
           </div>
         </div>

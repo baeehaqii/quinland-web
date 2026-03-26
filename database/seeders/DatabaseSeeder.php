@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             PageSeeder::class,
             EventCsrPageSeeder::class,
             MenuSeeder::class,
+            FaqSeeder::class,
+            PartnerSeeder::class,
+            PropertySeeder::class,
         ]);
     }
 }

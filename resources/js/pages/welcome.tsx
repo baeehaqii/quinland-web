@@ -9,14 +9,13 @@ import { NewsSection } from "@/v0-ui-quinland/components/news/news-section"
 import { EventsSection } from "@/v0-ui-quinland/components/events/events-section"
 import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section"
 
-export default function Welcome() {
+export default function Welcome({ page, faqs }: any) {
     return (
         <>
-            <Head title="Quinland Grup" />
+            <Head title={page?.seo_title || "Quinland Grup"} />
             <Navbar />
             <main>
                 <HeroSection />
-                {/* Spacer agar search bar tidak tertutup konten berikutnya */}
                 <div className="h-16" />
                 <AboutSection />
                 <PropertiesSection />

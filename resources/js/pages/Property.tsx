@@ -27,6 +27,7 @@ interface PageSection {
     cta_label?: string;
     cta_url?: string;
     slides?: HeroSlide[];
+    features?: { feature: string }[];
   };
 }
 
@@ -179,8 +180,15 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
               <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                 {propertyBlock?.data?.title || "All Properties"}
               </h2>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {propertyBlock?.data?.features?.map((f: any, index: number) => (
+                  <span key={index} className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary rounded-full">
+                    {f.feature}
+                  </span>
+                ))}
+              </div>
               {propertyBlock?.data?.description && (
-                <p className="text-sm text-muted-foreground mt-1">{propertyBlock.data.description}</p>
+                <p className="text-sm text-muted-foreground mt-2">{propertyBlock.data.description}</p>
               )}
             </div>
             <span className="text-sm text-muted-foreground">{properties.length} projects found</span>

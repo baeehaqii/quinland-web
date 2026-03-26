@@ -9,38 +9,44 @@ import { resolveMediaUrl } from "@/lib/resolve-media-url"
 const FEATURES = [
   {
     icon: BrickWall,
-    title: "Walls",
+    title: "Dinding",
     description:
-      "In construction, for both external and internal walls, we use Kerameya 2NF bricks, which are laid with a warm mortar.",
+      "Menggunakan bata ringan (hebel) berkualitas tinggi yang diplester dan diaci rapi, memberikan insulasi suhu dan suara yang baik.",
   },
   {
     icon: Home,
-    title: "Facade",
+    title: "Fasad",
     description:
-      "Combining Roben clinker bricks with the durable silicon-silicate plaster Baumit, resistant to aggressive environments. Insulation consists of 200mm Neopor polystyrene.",
+      "Desain fasad modern minimalis yang dilapisi cat eksterior tahan cuaca, memberikan tampilan elegan dan perlindungan maksimal.",
   },
   {
     icon: Triangle,
-    title: "Roof",
+    title: "Atap",
     description:
-      "Pruszynski standing seam roofing with 200mm thick basalt wool insulation.",
+      "Struktur rangka atap baja ringan bersertifikat SNI dengan penutup atap genteng beton berkualitas yang anti bocor.",
   },
   {
     icon: LayoutGrid,
-    title: "Window",
+    title: "Jendela & Pintu",
     description:
-      "Rehau PVC windows. Six-chamber profile with energy-saving double glazing and inert gas, profile system 70 mm.",
+      "Kusen aluminium yang tahan lama dan presisi, dipadukan dengan desain daun pintu yang modern serta bukaan kaca untuk pencahayaan maksimal.",
   },
 ] as const
 
 const ABOUT_DESCRIPTION =
-  "We are a team of passionate professionals dedicated to delivering exceptional real estate experiences. With years of expertise in property development and architecture, we combine innovative design with quality craftsmanship to create homes that inspire and endure."
+  "Quinland adalah perusahaan pengembang properti yang berkomitmen menghadirkan hunian berkualitas untuk masyarakat Indonesia. Kami percaya bahwa setiap orang berhak memiliki rumah yang layak, nyaman, dan bernilai."
 
 export function AboutSection() {
   const [showDescription, setShowDescription] = useState(false)
   const { props } = usePage<any>()
+  
+  // Extract dynamic data from page content
+  const pageContent = props.page?.content || []
+  const aboutSection = pageContent.find((block: any) => block.type === 'about_section')?.data || {}
+  
   const media = props.media || {}
-  const coverImage = resolveMediaUrl(media.about_cover, "/storage/media/hero-bg-2.jpg")
+  const coverImage = aboutSection.image_id ? resolveMediaUrl(aboutSection.image_id, "/storage/media/hero-bg-2.jpg") : resolveMediaUrl(media.about_cover, "/storage/media/hero-bg-2.jpg")
+  const descriptionText = aboutSection.description_1 || ABOUT_DESCRIPTION
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -79,7 +85,7 @@ export function AboutSection() {
                 : "-translate-y-4 opacity-0"
                 }`}
             >
-              {ABOUT_DESCRIPTION}
+              {descriptionText}
             </p>
           </div>
 
