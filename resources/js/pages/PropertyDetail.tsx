@@ -21,6 +21,7 @@ interface PropertyDetailData {
 interface PropertyDetailPageProps {
   property: PropertyDetailData
   otherProperties?: Property[]
+  propertyId: string | number
 }
 
 /* ---------- Breadcrumb ---------- */
@@ -32,7 +33,7 @@ const buildBreadcrumb = (name: string, category?: string) => [
 ]
 
 /* ---------- Page ---------- */
-export default function PropertyDetailPage({ property, otherProperties = [] }: PropertyDetailPageProps) {
+export default function PropertyDetailPage({ property, otherProperties = [], propertyId }: PropertyDetailPageProps) {
   const images = property.images?.length ? property.images : ["/storage/media/placeholder.jpg"]
   const breadcrumb = buildBreadcrumb(property.name, property.category)
 
@@ -85,7 +86,7 @@ export default function PropertyDetailPage({ property, otherProperties = [] }: P
               name={property.name}
               description={property.description}
             />
-            <BookingSidebar price={property.price} />
+            <BookingSidebar price={property.price} propertyId={propertyId} />
           </div>
         </div>
 

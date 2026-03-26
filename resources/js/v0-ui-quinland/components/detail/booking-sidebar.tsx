@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { CheckCircle, MessageCircle, X } from "lucide-react"
+import { router } from "@inertiajs/react"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -126,15 +127,20 @@ function ResendTimer({
 // ---------------------------------------------------------------------------
 interface BookingSidebarProps {
   price?: string
+  propertyId: string | number
 }
 
-export function BookingSidebar({ price }: BookingSidebarProps) {
+export function BookingSidebar({ price, propertyId }: BookingSidebarProps) {
   const [agreed, setAgreed] = useState(false)
+  const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
+  const [email, setEmail] = useState("")
+  const [date, setDate] = useState("")
   const [modalStep, setModalStep] = useState<ModalStep | null>(null)
   const [dummyOtp, setDummyOtp] = useState("")
   const [otpValue, setOtpValue] = useState<string[]>(Array(6).fill(""))
   const [otpError, setOtpError] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
 
   function handleSubmitForm(e: React.FormEvent) {
     e.preventDefault()
@@ -160,7 +166,19 @@ export function BookingSidebar({ price }: BookingSidebarProps) {
   function handleVerifyOtp() {
     const entered = otpValue.join("")
     if (entered === dummyOtp) {
-      setModalStep("success")
+      // Send data to backend
+      router.post('/booking', {
+        nama: name,
+        phone,
+        email,
+        date,
+        property_id: propertyId
+      }, {
+        onSuccess: () => {
+          setModalStep(null)
+          setIsSuccess(true)
+        }
+      })
     } else {
       setOtpError(true)
     }
@@ -187,99 +205,121 @@ export function BookingSidebar({ price }: BookingSidebarProps) {
 
         {/* Booking card */}
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-foreground">
-            Booking Appointment
-          </h3>
-          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-            Schedule a time to meet with our property expert and explore Quinland
-            Grup products
-          </p>
-
-          <form className="mt-5 flex flex-col gap-4" onSubmit={handleSubmitForm}>
-            {/* Name */}
-            <div>
-              <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">
-                Your Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                required
-                placeholder="Your Name"
-                className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
-              />
+          {isSuccess ? (
+            <div className="flex flex-col items-center text-center animate-in fade-in zoom-in duration-500">
+               <div className="flex size-16 items-center justify-center rounded-full bg-green-100 mb-4">
+                  <CheckCircle className="size-9 text-green-600" />
+                </div>
+              <h3 className="text-lg font-bold text-foreground">
+                Permintaan Berhasil Disimpan!
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Data Anda telah disimpan ke dalam sistem. Dalam waktu <span className="font-semibold text-foreground">24 jam</span> marketing kami akan menghubungi anda.
+              </p>
             </div>
+          ) : (
+            <>
+              <h3 className="text-lg font-bold text-foreground">
+                Booking Appointment
+              </h3>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                Schedule a time to meet with our property expert and explore Quinland
+                Grup products
+              </p>
 
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-foreground">
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                required
-                placeholder="+62"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
-              />
-            </div>
+              <form className="mt-5 flex flex-col gap-4" onSubmit={handleSubmitForm}>
+                {/* Name */}
+                <div>
+                  <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">
+                    Your Name
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    required
+                    placeholder="Your Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
+                  />
+                </div>
 
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                placeholder="Email"
-                className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
-              />
-            </div>
+                {/* Phone */}
+                <div>
+                  <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-foreground">
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    required
+                    placeholder="+62"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
+                  />
+                </div>
 
-            {/* Date */}
-            <div>
-              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-foreground">
-                Book Appointment Date
-              </label>
-              <input
-                id="date"
-                type="date"
-                required
-                className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
-              />
-            </div>
+                {/* Email */}
+                <div>
+                  <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
+                  />
+                </div>
 
-            {/* Checkbox */}
-            <label className="flex cursor-pointer items-start gap-2.5">
-              <input
-                type="checkbox"
-                required
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="mt-0.5 size-4 shrink-0 rounded border-border accent-red-600"
-              />
-              <span className="text-xs leading-relaxed text-muted-foreground">
-                I agree to the terms and conditions that apply.*
-              </span>
-            </label>
+                {/* Date */}
+                <div>
+                  <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-foreground">
+                    Book Appointment Date
+                  </label>
+                  <input
+                    id="date"
+                    type="date"
+                    required
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
+                  />
+                </div>
 
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              Quinland Grup will never sell or share your information with a third
-              party
-            </p>
+                {/* Checkbox */}
+                <label className="flex cursor-pointer items-start gap-2.5">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                    className="mt-0.5 size-4 shrink-0 rounded border-border accent-red-600"
+                  />
+                  <span className="text-xs leading-relaxed text-muted-foreground">
+                    I agree to the terms and conditions that apply.*
+                  </span>
+                </label>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-            >
-              Submit
-            </button>
-          </form>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Quinland Grup will never sell or share your information with a third
+                  party
+                </p>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  className="w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                >
+                  Submit
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </aside>
 

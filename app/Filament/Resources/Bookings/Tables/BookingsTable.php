@@ -14,8 +14,8 @@ class BookingsTable
     {
         return $table
             ->columns([
-                TextColumn::make('property_id')
-                    ->numeric()
+                TextColumn::make('property.nama_property')
+                    ->label('Property')
                     ->sortable(),
                 TextColumn::make('nama')
                     ->searchable(),

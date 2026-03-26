@@ -228,8 +228,23 @@ Route::get('/property/{slug}', function ($slug) {
     return Inertia::render('PropertyDetail', [
         'property' => $propertyData,
         'otherProperties' => $otherProperties,
+        'propertyId' => $propertyId, // Pass the propertyId to the frontend
     ]);
 })->name('property.show');
+
+Route::post('/booking', function (\Illuminate\Http\Request $request) {
+    $validated = $request->validate([
+        'nama' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'email' => 'required|email|max:255',
+        'date' => 'required|date',
+        'property_id' => 'required|exists:properties,id',
+    ]);
+
+    \App\Models\Booking::create($validated);
+
+    return back()->with('success', 'Booking berhasil disimpan.');
+})->name('booking.store');
 
 Route::get('/event-csr', function () {
     return Inertia::render('EventCsr', [

@@ -12,8 +12,9 @@ class BookingForm
     {
         return $schema
             ->components([
-                TextInput::make('property_id')
-                    ->numeric(),
+                \Filament\Forms\Components\Select::make('property_id')
+                    ->relationship('property', 'nama_property')
+                    ->required(),
                 TextInput::make('nama')
                     ->required(),
                 TextInput::make('phone')
