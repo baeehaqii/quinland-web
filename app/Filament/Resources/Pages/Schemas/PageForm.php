@@ -192,7 +192,7 @@ class PageForm
                                     ]),
 
                                 \Filament\Forms\Components\Builder\Block::make('about_section')
-                                    ->label('About Section')
+                                    ->label('About Sectionn')
                                     ->icon('heroicon-o-information-circle')
                                     ->schema([
                                         TextInput::make('title')
