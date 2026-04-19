@@ -5,7 +5,7 @@ export HOME="${HOME:-/root}"
 export COMPOSER_HOME="${COMPOSER_HOME:-/root/.composer}"
 export COMPOSER_ALLOW_SUPERUSER=1
 
-APP_DIR="/www/wwwroot/quinland.findy.my.id"
+APP_DIR="${APP_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 BRANCH="${BRANCH:-main}"
 WEB_USER="${WEB_USER:-www}"
 WEB_GROUP="${WEB_GROUP:-www}"
@@ -22,6 +22,11 @@ PHP_BIN="$(command -v php || echo /usr/bin/php)"
 COMPOSER_BIN="$(command -v composer || echo /www/server/php/bin/composer)"
 
 cd "$APP_DIR"
+
+if [ ! -f artisan ]; then
+  echo "[deploy] ERROR: artisan not found in $APP_DIR"
+  exit 1
+fi
 
 echo "[deploy] Start in: $APP_DIR"
 echo "[deploy] Branch: $BRANCH"
@@ -50,13 +55,14 @@ if [ ! -L public/storage ]; then
 else
   echo "[deploy] public/storage symlink already exists"
 fi
+"$PHP_BIN" artisan optimize:clear
 "$PHP_BIN" artisan package:discover --ansi
 "$PHP_BIN" artisan migrate --force
+"$PHP_BIN" artisan filament:assets --ansi || true
 "$PHP_BIN" artisan config:cache
 "$PHP_BIN" artisan route:cache
 "$PHP_BIN" artisan view:cache
-"$PHP_BIN" artisan icons:cache || true
-"$PHP_BIN" artisan filament:cache-components || true
+"$PHP_BIN" artisan filament:optimize || true
 "$PHP_BIN" artisan queue:restart || true
 
 # Permissions.

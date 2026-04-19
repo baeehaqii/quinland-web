@@ -7,84 +7,23 @@ import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 import { Footer } from "@/v0-ui-quinland/components/layout/footer"
 import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
-const ALL_ARTICLES = [
-  {
-    id: 1,
-    title: "Rumah Dijual di Tangerang untuk Keluarga Nyaman & Aman",
-    excerpt:
-      "Cari rumah dijual di Tangerang untuk keluarga? Ini kelebihan Excelia Banjar Wijaya dengan ruang luas, lokasi strategis, keamanan 24 jam, dan akses sekolah.",
-    image: "/storage/media/blog-1.jpg",
-    date: "19 Feb 2026",
-    category: "Blog",
-  },
-  {
-    id: 2,
-    title: "Amadeus Signature, Rumah di Bogor untuk Investasi Jangka Panjang",
-    excerpt:
-      "Rumah di Bogor Amadeus Signature menawarkan desain premium, lingkungan asri, akses tol dekat, dan potensi investasi yang menjanjikan untuk masa depan.",
-    image: "/storage/media/blog-2.jpg",
-    date: "17 Feb 2026",
-    category: "Blog",
-  },
-  {
-    id: 3,
-    title: "Aerium Residence, Apartemen untuk Milenial, Pet Friendly & Modern",
-    excerpt:
-      "Apartemen Jakarta Barat Aerium hadir dengan konsep pet-friendly, fasilitas premium, lingkungan yang nyaman, dan desain modern untuk generasi milenial.",
-    image: "/storage/media/blog-3.jpg",
-    date: "16 Feb 2026",
-    category: "Blog",
-  },
-  {
-    id: 4,
-    title: "Tips Memilih Rumah Idaman dengan Budget Terbatas",
-    excerpt:
-      "Panduan lengkap memilih rumah impian dengan budget pas-pasan tanpa mengorbankan kualitas dan lokasi strategis.",
-    image: "/storage/media/blog-4.jpg",
-    date: "15 Feb 2026",
-    category: "Tips",
-  },
-  {
-    id: 5,
-    title: "5 Alasan Mengapa Properti di BSD City Terus Diminati",
-    excerpt:
-      "BSD City menjadi salah satu kawasan hunian paling diminati di Indonesia. Ini 5 alasan mengapa properti di sana terus berkembang pesat.",
-    image: "/storage/media/blog-1.jpg",
-    date: "12 Feb 2026",
-    category: "Insight",
-  },
-  {
-    id: 6,
-    title: "Panduan KPR untuk Pembeli Rumah Pertama",
-    excerpt:
-      "Mengajukan KPR untuk pertama kalinya bisa membingungkan. Pelajari langkah-langkah penting dan tips agar pengajuan KPR Anda disetujui bank.",
-    image: "/storage/media/blog-2.jpg",
-    date: "10 Feb 2026",
-    category: "Tips",
-  },
-  {
-    id: 7,
-    title: "Tren Desain Interior Rumah 2026 yang Wajib Anda Tahu",
-    excerpt:
-      "Dari warna earth tone hingga material sustainable, ini adalah tren desain interior rumah yang paling banyak diminati di tahun 2026.",
-    image: "/storage/media/blog-3.jpg",
-    date: "8 Feb 2026",
-    category: "Insight",
-  },
-  {
-    id: 8,
-    title: "Keuntungan Membeli Apartemen di Kawasan CBD Jakarta",
-    excerpt:
-      "Investasi apartemen di kawasan CBD Jakarta memberikan keuntungan berlipat dari sisi harga sewa, capital gain, dan aksesibilitas pusat bisnis.",
-    image: "/storage/media/blog-4.jpg",
-    date: "5 Feb 2026",
-    category: "Insight",
-  },
-]
+interface Article {
+  id: number
+  title: string
+  excerpt: string
+  image: string | null
+  date: string
+  category: string
+  slug: string
+}
 
-const FEATURED_ARTICLES = ALL_ARTICLES.slice(0, 3)
+interface ArtikelPageProps {
+  articles?: Article[]
+  categories?: string[]
+  media?: Record<string, string>
+}
 
-function FeaturedSlider({ articles }: { articles: typeof ALL_ARTICLES }) {
+function FeaturedSlider({ articles }: { articles: Article[] }) {
   const [current, setCurrent] = useState(0)
   const [animating, setAnimating] = useState(false)
   const [direction, setDirection] = useState<"next" | "prev">("next")
@@ -112,7 +51,6 @@ function FeaturedSlider({ articles }: { articles: typeof ALL_ARTICLES }) {
     goTo(index, "next")
   }, [articles.length, current, goTo])
 
-  // Auto-play
   useEffect(() => {
     const timer = setInterval(() => {
       next()
@@ -129,7 +67,6 @@ function FeaturedSlider({ articles }: { articles: typeof ALL_ARTICLES }) {
       </h2>
 
       <div className="relative overflow-hidden rounded-3xl">
-        {/* Slide */}
         <div
           key={current}
           className={[
@@ -144,22 +81,20 @@ function FeaturedSlider({ articles }: { articles: typeof ALL_ARTICLES }) {
           ].join(" ")}
         >
           <img
-            src={article.image}
+            src={article.image || "/storage/media/blog-1.jpg"}
             alt={article.title}
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-          {/* Category badge */}
           <div className="absolute right-5 top-5">
             <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
               {article.category}
             </span>
           </div>
 
-          {/* Text content */}
           <Link
-            href={`/artikel/${article.id}`}
+            href={`/artikel/${article.slug}`}
             className="group absolute inset-x-0 bottom-0 p-6 sm:p-10"
           >
             <h3 className="text-2xl font-bold tracking-tight text-white transition-colors group-hover:text-emerald-400 sm:text-3xl text-balance">
@@ -172,7 +107,6 @@ function FeaturedSlider({ articles }: { articles: typeof ALL_ARTICLES }) {
           </Link>
         </div>
 
-        {/* Prev / Next buttons */}
         <button
           onClick={prev}
           aria-label="Artikel sebelumnya"
@@ -188,7 +122,6 @@ function FeaturedSlider({ articles }: { articles: typeof ALL_ARTICLES }) {
           <ChevronRight className="size-5" />
         </button>
 
-        {/* Dot indicators */}
         <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
           {articles.map((_, i) => (
             <button
@@ -207,45 +140,29 @@ function FeaturedSlider({ articles }: { articles: typeof ALL_ARTICLES }) {
   )
 }
 
-interface ArtikelPageProps {
-  media?: Record<string, string>
-}
+export default function ArtikelPage({ articles = [], categories = [], media = {} }: ArtikelPageProps) {
+  const heroImage = resolveMediaUrl(media.blog_hero, "/storage/media/blog-1.jpg")
 
-export default function ArtikelPage({ media = {} }: ArtikelPageProps) {
-  const blog1 = resolveMediaUrl(media.blog_1, "/storage/media/blog-1.jpg")
-  const blog2 = resolveMediaUrl(media.blog_2, "/storage/media/blog-2.jpg")
-  const blog3 = resolveMediaUrl(media.blog_3, "/storage/media/blog-3.jpg")
-  const blog4 = resolveMediaUrl(media.blog_4, "/storage/media/blog-4.jpg")
+  const [activeCategory, setActiveCategory] = useState<string>('Semua')
 
-  const articles = ALL_ARTICLES.map((article) => {
-    const imageMap: Record<number, string> = {
-      1: blog1,
-      2: blog2,
-      3: blog3,
-      4: blog4,
-      5: blog1,
-      6: blog2,
-      7: blog3,
-      8: blog4,
-    }
+  const allCategories = ['Semua', ...categories]
 
-    return {
-      ...article,
-      image: imageMap[article.id] || article.image,
-    }
-  })
+  const filtered = activeCategory === 'Semua'
+    ? articles
+    : articles.filter(a => a.category === activeCategory)
 
-  const featuredArticles = articles.slice(0, 3)
-  const rest = articles.slice(3)
+  const featured = filtered.slice(0, 3)
+  const rest = filtered.slice(3)
 
   return (
     <>
+      <Head title="Artikel | Quinland Grup" />
       <Navbar />
 
       {/* Hero Banner */}
       <section className="relative flex h-[300px] items-end sm:h-[360px]">
         <img
-          src={blog1}
+          src={heroImage}
           alt="Artikel banner"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -275,51 +192,84 @@ export default function ArtikelPage({ media = {} }: ArtikelPageProps) {
       <main className="bg-background">
         <div className="mx-auto max-w-7xl px-6 py-14 lg:px-10">
 
-          <FeaturedSlider articles={featuredArticles} />
-
-          {/* All Articles Grid */}
-          <section>
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Semua Artikel
-              </h2>
-              <span className="text-sm text-muted-foreground">
-                {ALL_ARTICLES.length} artikel
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {rest.map((article) => (
-                <article key={article.id} className="group">
-                  <Link href={`/artikel/${article.id}`} className="block">
-                    <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
-                      <img
-                        src={article.image}
-                        alt={article.title}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute right-3 top-3">
-                        <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
-                          {article.category}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mt-4">
-                      <h3 className="line-clamp-2 text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-emerald-700 sm:text-lg">
-                        {article.title}
-                      </h3>
-                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                        {article.excerpt}
-                      </p>
-                      <time className="mt-3 block text-xs text-muted-foreground">
-                        {article.date}
-                      </time>
-                    </div>
-                  </Link>
-                </article>
+          {/* ─── Filter Kategori ─── */}
+          {allCategories.length > 1 && (
+            <div className="mb-10 flex flex-wrap gap-2">
+              {allCategories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={[
+                    'rounded-full px-5 py-2 text-sm font-semibold transition-colors',
+                    activeCategory === cat
+                      ? 'bg-emerald-700 text-white'
+                      : 'border border-border bg-card text-foreground hover:border-emerald-700 hover:text-emerald-700',
+                  ].join(' ')}
+                >
+                  {cat}
+                </button>
               ))}
             </div>
-          </section>
+          )}
+
+          {filtered.length === 0 ? (
+            <div className="py-24 text-center text-muted-foreground">
+              <p className="text-lg">
+                {articles.length === 0
+                  ? 'Belum ada artikel yang dipublikasikan.'
+                  : 'Tidak ada artikel untuk kategori ini.'}
+              </p>
+            </div>
+          ) : (
+            <>
+              {featured.length > 0 && <FeaturedSlider articles={featured} />}
+
+              {rest.length > 0 && (
+                <section>
+                  <div className="mb-6 flex items-center justify-between">
+                    <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                      Semua Artikel
+                    </h2>
+                    <span className="text-sm text-muted-foreground">
+                      {filtered.length} artikel
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {rest.map((article) => (
+                      <article key={article.id} className="group">
+                        <Link href={`/artikel/${article.slug}`} className="block">
+                          <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
+                            <img
+                              src={article.image || "/storage/media/blog-1.jpg"}
+                              alt={article.title}
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute right-3 top-3">
+                              <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
+                                {article.category}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="mt-4">
+                            <h3 className="line-clamp-2 text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-emerald-700 sm:text-lg">
+                              {article.title}
+                            </h3>
+                            <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                              {article.excerpt}
+                            </p>
+                            <time className="mt-3 block text-xs text-muted-foreground">
+                              {article.date}
+                            </time>
+                          </div>
+                        </Link>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          )}
 
         </div>
       </main>

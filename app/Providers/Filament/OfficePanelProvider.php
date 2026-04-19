@@ -26,6 +26,7 @@ class OfficePanelProvider extends PanelProvider
         $primaryColor = Color::Amber;
         $brandName = config('app.name');
         $brandLogo = null;
+        $panelFavicon = asset('favicon.ico');
 
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
@@ -33,6 +34,9 @@ class OfficePanelProvider extends PanelProvider
                 $brandName = $settings->site_name ?: config('app.name');
                 if ($settings->site_logo) {
                     $brandLogo = asset('storage/' . $settings->site_logo);
+                }
+                if ($settings->site_favicon) {
+                    $panelFavicon = asset('storage/' . ltrim((string) $settings->site_favicon, '/'));
                 }
                 if ($settings->theme_color) {
                     $primaryColor = $settings->theme_color;
@@ -47,6 +51,7 @@ class OfficePanelProvider extends PanelProvider
             ->id('office')
             ->path('office')
             ->login()
+            ->favicon($panelFavicon)
             ->brandName($brandName)
             ->brandLogo($brandLogo)
             ->brandLogoHeight('3rem')

@@ -1,10 +1,7 @@
 import { Link } from '@inertiajs/react';
 import {
   ChevronRight,
-  TreePine,
-  GraduationCap,
   HeartPulse,
-  Home,
   ArrowRight,
   Calendar,
 } from "lucide-react"
@@ -14,69 +11,24 @@ import { Footer } from "@/v0-ui-quinland/components/layout/footer"
 import { Navbar } from "@/v0-ui-quinland/components/layout/navbar"
 import { resolveMediaUrl } from "@/lib/resolve-media-url"
 
-const CSR_PROGRAMS = [
-  {
-    id: 1,
-    title: "Rumah untuk Semua",
-    description:
-      "Program pembangunan rumah layak huni bagi keluarga kurang mampu di berbagai wilayah Indonesia. Bersama relawan dan mitra, kami membantu mewujudkan hunian yang aman dan nyaman.",
-    image: "/storage/media/csr-1.jpg",
-    category: "Housing",
-    icon: Home,
-    date: "Ongoing",
-  },
-  {
-    id: 2,
-    title: "Quinland Green Initiative",
-    description:
-      "Inisiatif penanaman 10.000 pohon di kawasan perumahan dan area publik untuk menciptakan lingkungan hijau yang berkelanjutan bagi generasi mendatang.",
-    image: "/storage/media/csr-2.jpg",
-    category: "Lingkungan",
-    icon: TreePine,
-    date: "Jan - Des 2026",
-  },
-  {
-    id: 3,
-    title: "Beasiswa Pendidikan Anak Bangsa",
-    description:
-      "Program beasiswa pendidikan bagi anak-anak berprestasi dari keluarga prasejahtera di sekitar kawasan pengembangan Quinland Grup.",
-    image: "/storage/media/csr-3.jpg",
-    category: "Pendidikan",
-    icon: GraduationCap,
-    date: "Tahun Ajaran 2026",
-  },
-  {
-    id: 4,
-    title: "Layanan Kesehatan Masyarakat",
-    description:
-      "Kegiatan pemeriksaan kesehatan gratis dan penyuluhan gizi untuk warga di sekitar proyek pengembangan, bekerja sama dengan rumah sakit dan tenaga medis profesional.",
-    image: "/storage/media/csr-4.jpg",
-    category: "Kesehatan",
-    icon: HeartPulse,
-    date: "Quarterly",
-  },
-]
-
-export const metadata = {
-  title: "Event & CSR - Quinland Grup",
-  description:
-    "Kegiatan event properti dan program Corporate Social Responsibility Quinland Grup untuk masyarakat dan lingkungan.",
+interface CsrItem {
+  id: number
+  title: string
+  description: string
+  image: string | null
+  date: string
+  category: string
+  slug: string
 }
 
 interface EventCsrPageProps {
   media?: Record<string, string>
-  csrs?: any[]
+  events?: any[]
+  csrs?: CsrItem[]
 }
 
-export default function EventCsrPage({ media = {}, csrs = [] }: EventCsrPageProps) {
-  const csrItems = csrs.length > 0 ? csrs : CSR_PROGRAMS
+export default function EventCsrPage({ media = {}, events = [], csrs = [] }: EventCsrPageProps) {
   const heroImage = resolveMediaUrl(media.event_csr_hero, "/storage/media/event-csr-hero.jpg")
-  const csrImages = [
-    resolveMediaUrl(media.csr_1, "/storage/media/csr-1.jpg"),
-    resolveMediaUrl(media.csr_2, "/storage/media/csr-2.jpg"),
-    resolveMediaUrl(media.csr_3, "/storage/media/csr-3.jpg"),
-    resolveMediaUrl(media.csr_4, "/storage/media/csr-4.jpg"),
-  ]
 
   return (
     <>
@@ -138,11 +90,11 @@ export default function EventCsrPage({ media = {}, csrs = [] }: EventCsrPageProp
               </p>
             </div>
 
-            {/* CSR Cards Grid */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {csrItems.map((program: any) => {
-                const Icon = program.icon || HeartPulse
-                return (
+            {csrs.length === 0 ? (
+              <p className="text-muted-foreground">Belum ada program CSR yang dipublikasikan.</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {csrs.map((program) => (
                   <Link
                     href={`/event-csr/csr/${program.slug || program.id}`}
                     key={program.id}
@@ -151,14 +103,14 @@ export default function EventCsrPage({ media = {}, csrs = [] }: EventCsrPageProp
                     {/* Image */}
                     <div className="relative h-52 overflow-hidden">
                       <img
-                        src={csrImages[program.id - 1] || program.image}
+                        src={program.image || "/storage/media/csr-1.jpg"}
                         alt={program.title}
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       {/* Category badge */}
                       <div className="absolute left-4 top-4">
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
-                          <Icon className="size-3" />
+                          <HeartPulse className="size-3" />
                           {program.category}
                         </span>
                       </div>
@@ -186,9 +138,9 @@ export default function EventCsrPage({ media = {}, csrs = [] }: EventCsrPageProp
                       </div>
                     </div>
                   </Link>
-                )
-              })}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

@@ -9,7 +9,7 @@ import { NewsSection } from "@/v0-ui-quinland/components/news/news-section"
 import { EventsSection } from "@/v0-ui-quinland/components/events/events-section"
 import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section"
 
-export default function Welcome({ page, faqs }: any) {
+export default function Welcome({ page, properties = [], faqs }: any) {
     return (
         <>
             <Head title={page?.seo_title || "Quinland Grup"} />
@@ -18,7 +18,7 @@ export default function Welcome({ page, faqs }: any) {
                 <HeroSection />
                 <div className="h-16" />
                 <AboutSection />
-                <PropertiesSection />
+                <PropertiesSection properties={properties} />
                 <PartnerSection />
                 <NewsSection />
                 <EventsSection />

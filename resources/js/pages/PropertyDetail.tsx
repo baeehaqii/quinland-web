@@ -9,6 +9,22 @@ import { EventsSection } from "@/v0-ui-quinland/components/events/events-section
 import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section"
 import { Footer } from "@/v0-ui-quinland/components/layout/footer"
 
+interface TipeRumah {
+  name: string
+  sqft?: number | null
+  bedrooms?: number | null
+  bathrooms?: number | null
+  description?: string
+  gambar_denah?: string | null
+}
+
+interface PropertyProgress {
+  month: string
+  label?: string
+  percentage: number
+  image?: string | null
+}
+
 interface PropertyDetailData {
   name: string
   slug: string
@@ -16,6 +32,12 @@ interface PropertyDetailData {
   price: string
   images: string[]
   description: string
+  alamat?: string
+  whatsapp_number?: string | null
+  fasilitas_property?: Array<{ label: string }>
+  tipe_rumah?: TipeRumah[]
+  lokasi_maps_embed?: string | null
+  property_progress?: PropertyProgress[]
 }
 
 interface PropertyDetailPageProps {
@@ -85,6 +107,11 @@ export default function PropertyDetailPage({ property, otherProperties = [], pro
             <PropertyTabs
               name={property.name}
               description={property.description}
+              alamat={property.alamat}
+              fasilitasProperty={property.fasilitas_property ?? []}
+              tipeRumah={property.tipe_rumah ?? []}
+              lokasiMapsEmbed={property.lokasi_maps_embed}
+              propertyProgress={property.property_progress ?? []}
             />
             <BookingSidebar price={property.price} propertyId={propertyId} />
           </div>

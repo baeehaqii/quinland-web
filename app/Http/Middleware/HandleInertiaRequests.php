@@ -55,6 +55,15 @@ class HandleInertiaRequests extends Middleware
                     ? Storage::disk('public')->url($settings->site_logo)
                     : null,
             ],
+            'properties' => fn () => \App\Models\Property::query()->latest('id')->get()->map(fn (\App\Models\Property $p) => [
+                'id'         => (string) $p->id,
+                'name'       => $p->nama_property ?: 'Property ' . $p->id,
+                'location'   => $p->alamat ?: '-',
+                'slug'       => $p->slug ?: \Illuminate\Support\Str::slug((string) ($p->nama_property ?: 'property-' . $p->id)),
+                'kategori'   => $p->kategori ?: 'Lainnya',
+                'image'      => collect($p->gambar_utama ?? [])->filter(fn ($path) => filled($path))->map(fn ($path) => ltrim((string) $path, '/'))->values()->all(),
+                'tipe_rumah' => is_array($p->tipe_rumah) ? $p->tipe_rumah : [],
+            ])->values()->all(),
             'events' => fn () => \App\Models\Event::where('is_published', true)->orderBy('event_date', 'asc')->get()->map(function($event) {
                 return [
                     'id' => $event->id,

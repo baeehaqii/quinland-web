@@ -50,44 +50,44 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Purwokerto Office */}
+          {/* Bumiayu Office */}
           <div>
-            <h3 className="mb-6 text-lg font-semibold">Office Purwokerto</h3>
+            <h3 className="mb-6 text-lg font-semibold">Kantor Bumiayu</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-zinc-400" />
                 <p className="text-sm text-zinc-400">
-                  Jl. Prof. Dr. HR. Boenjamin No. 708, Grendeng, Purwokerto Timur, Banyumas, Jawa Tengah 53122
+                  Perumahan Quinland Midtown, Jl. Rumono Krajan 1 RT 06/01, Desa Jatisawit, Kecamatan Bumiayu – Brebes
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="size-4 shrink-0 text-zinc-400" />
-                <p className="text-sm text-zinc-400">+62 821-3456-7890</p>
+                <p className="text-sm text-zinc-400">0812 1555 0665</p>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="size-4 shrink-0 text-zinc-400" />
-                <p className="text-sm text-zinc-400">info@quinland.co.id</p>
+                <p className="text-sm text-zinc-400">quinlandofficial@gmail.com</p>
               </div>
             </div>
           </div>
 
-          {/* Bumiayu Office */}
+          {/* Purwokerto Office */}
           <div>
-            <h3 className="mb-6 text-lg font-semibold">Office Bumiayu</h3>
+            <h3 className="mb-6 text-lg font-semibold">Kantor Purwokerto</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-zinc-400" />
                 <p className="text-sm text-zinc-400">
-                  Jl. KH Ahmad Dahlan, Bumiayu (Samping JNE), Brebes, Jawa Tengah 52273
+                  Jalan Senopati No 1, Kejawar, Kelurahan Arcawinangun, Kec. Purwokerto Timur, Kab. Banyumas
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="size-4 shrink-0 text-zinc-400" />
-                <p className="text-sm text-zinc-400">+62 812-1916-6606</p>
+                <p className="text-sm text-zinc-400">0823 2531 0008</p>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="size-4 shrink-0 text-zinc-400" />
-                <p className="text-sm text-zinc-400">support@quinland.co.id</p>
+                <p className="text-sm text-zinc-400">quinlandofficial@gmail.com</p>
               </div>
             </div>
           </div>
@@ -99,30 +99,11 @@ export function Footer() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 py-8 sm:flex-row sm:px-6 lg:px-8">
           {/* Logo and brand */}
           <Link href="/" className="flex items-center gap-3">
-            {siteLogo ? (
-              <img
-                src={siteLogo}
-                alt={siteName}
-                className="h-12 w-auto object-contain"
-              />
-            ) : (
-              <div className="flex items-center gap-2">
-                 <div className="flex size-10 items-center justify-center rounded-lg bg-white/10">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="text-white"
-                    >
-                      <path d="M3 21V12L12 3L21 12V21" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                      <path d="M9 21V14H15V21" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                    </svg>
-                 </div>
-                <span className="text-xl font-bold">{siteName}</span>
-              </div>
-            )}
+            <img
+              src={siteLogo || "/Quinland Group PNG Putih.png"}
+              alt={siteName}
+              className="h-14 w-auto object-contain"
+            />
           </Link>
 
           {/* Copyright */}

@@ -9,32 +9,32 @@ import { resolveMediaUrl } from "@/lib/resolve-media-url"
 const FEATURES = [
   {
     icon: BrickWall,
-    title: "Dinding",
+    title: "Sejak 2022",
     description:
-      "Menggunakan bata ringan (hebel) berkualitas tinggi yang diplester dan diaci rapi, memberikan insulasi suhu dan suara yang baik.",
+      "Quinland Group berdiri pada 2022 dan telah menyelesaikan lebih dari 495 unit hunian di wilayah Brebes dan Banyumas, Jawa Tengah.",
   },
   {
     icon: Home,
-    title: "Fasad",
+    title: "5 Proyek Unggulan",
     description:
-      "Desain fasad modern minimalis yang dilapisi cat eksterior tahan cuaca, memberikan tampilan elegan dan perlindungan maksimal.",
+      "Quinland, Quinland Village, Quinland Midtown, GriyaLand Sumbang, dan GriyaLand Kembaran — hunian untuk semua kalangan.",
   },
   {
     icon: Triangle,
-    title: "Atap",
+    title: "Lokasi Strategis",
     description:
-      "Struktur rangka atap baja ringan bersertifikat SNI dengan penutup atap genteng beton berkualitas yang anti bocor.",
+      "Setiap proyek hadir di lokasi strategis dengan akses mudah ke pusat kota, fasilitas publik, dan kawasan industri.",
   },
   {
     icon: LayoutGrid,
-    title: "Jendela & Pintu",
+    title: "For a Better Life",
     description:
-      "Kusen aluminium yang tahan lama dan presisi, dipadukan dengan desain daun pintu yang modern serta bukaan kaca untuk pencahayaan maksimal.",
+      "Komitmen kami: rumah bukan sekadar tempat tinggal, tetapi fondasi untuk tumbuh, bermimpi, dan menjalani hidup lebih bermakna.",
   },
 ] as const
 
 const ABOUT_DESCRIPTION =
-  "Quinland adalah perusahaan pengembang properti yang berkomitmen menghadirkan hunian berkualitas untuk masyarakat Indonesia. Kami percaya bahwa setiap orang berhak memiliki rumah yang layak, nyaman, dan bernilai."
+  "Quinland Group adalah developer properti terpercaya yang hadir sejak 2022. Didirikan oleh Zaldy Musa Muzaky, S.E., kami berkomitmen menghadirkan hunian berkualitas, inovatif, dan berkelanjutan — \"For a Better Life\" — bagi seluruh lapisan masyarakat."
 
 export function AboutSection() {
   const [showDescription, setShowDescription] = useState(false)
