@@ -1,0 +1,34 @@
+name: deploy-aapanel
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Trigger aaPanel Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger aaPanel webhook
+        env:
+          WEBHOOK_URL: ${{ secrets.AAPANEL_WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "::error::Missing AAPANEL_WEBHOOK_URL secret."
+            exit 1
+          fi
+
+          echo "Triggering aaPanel webhook..."
+          curl --fail --show-error --silent \
+            --request POST \
+            "$WEBHOOK_URL"
+
+          echo "aaPanel webhook triggered successfully."
