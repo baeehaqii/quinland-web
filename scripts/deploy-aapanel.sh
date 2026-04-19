@@ -5,7 +5,17 @@ export HOME="${HOME:-/root}"
 export COMPOSER_HOME="${COMPOSER_HOME:-/root/.composer}"
 export COMPOSER_ALLOW_SUPERUSER=1
 
-APP_DIR="${APP_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
+DEFAULT_APP_DIR="/www/wwwroot/quinlandgroup.com"
+
+if [ -n "${APP_DIR:-}" ]; then
+  APP_DIR="$APP_DIR"
+elif [ -f "$PWD/artisan" ]; then
+  APP_DIR="$PWD"
+elif [ -f "$DEFAULT_APP_DIR/artisan" ]; then
+  APP_DIR="$DEFAULT_APP_DIR"
+else
+  APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+fi
 BRANCH="${BRANCH:-main}"
 WEB_USER="${WEB_USER:-www}"
 WEB_GROUP="${WEB_GROUP:-www}"
@@ -25,6 +35,9 @@ cd "$APP_DIR"
 
 if [ ! -f artisan ]; then
   echo "[deploy] ERROR: artisan not found in $APP_DIR"
+  echo "[deploy] pwd: $PWD"
+  echo "[deploy] script dir: $(cd "$(dirname "$0")" && pwd)"
+  echo "[deploy] Hint: set APP_DIR explicitly in aaPanel script, e.g. APP_DIR=/www/wwwroot/quinlandgroup.com"
   exit 1
 fi
 
