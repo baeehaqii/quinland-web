@@ -56,9 +56,7 @@ export default function AboutPage({ media = {}, page = null, properties = [] }: 
   const officeSection = pageContent.find((block: any) => block.type === 'office_section')?.data || {}
   const pageHero = pageContent.find((block: any) => block.type === 'page_hero')?.data || {}
 
-  const heroImage = pageHero?.image_id
-    ? resolveMediaUrl(pageHero.image_id, "/storage/media/about-hero.jpg")
-    : resolveMediaUrl(media.about_hero, "/storage/media/about-hero.jpg")
+  const heroImage = resolveMediaUrl(pageHero?.image_url ?? pageHero?.image_id ?? media.about_hero, "/storage/media/about-hero.jpg")
   const heroTitle = pageHero?.title || "Tentang Quinland Group"
   const heroDesc = pageHero?.description || "Developer properti terpercaya yang menghadirkan hunian berkualitas, inovatif, dan berkelanjutan bagi seluruh lapisan masyarakat."
 
@@ -132,7 +130,7 @@ export default function AboutPage({ media = {}, page = null, properties = [] }: 
 
             <div className="relative overflow-hidden rounded-2xl">
               <img
-                src={aboutSection.image_id ? resolveMediaUrl(aboutSection.image_id, "/storage/media/about-team.jpg") : resolveMediaUrl(media.about_team, "/storage/media/about-team.jpg")}
+                src={resolveMediaUrl(aboutSection.image_url ?? aboutSection.image_id ?? media.about_team, "/storage/media/about-team.jpg")}
                 alt="Tim Quinland"
                 width={640}
                 height={480}
@@ -297,7 +295,7 @@ export default function AboutPage({ media = {}, page = null, properties = [] }: 
           <div className="mt-12 grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
             <div className="overflow-hidden rounded-2xl">
               <img
-                src={officeSection.image_id ? resolveMediaUrl(officeSection.image_id, "/storage/media/office.jpg") : resolveMediaUrl(media.office, "/storage/media/office.jpg")}
+                src={resolveMediaUrl(officeSection.image_url ?? officeSection.image_id ?? media.office, "/storage/media/office.jpg")}
                 alt="Kantor Quinland"
                 width={640}
                 height={400}

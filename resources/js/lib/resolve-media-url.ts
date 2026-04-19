@@ -1,17 +1,44 @@
-export function resolveMediaUrl(path: string | null | undefined, fallback: string): string {
-  if (!path) {
+type UnknownRecord = Record<string, unknown>
+
+function extractPath(value: unknown): string | null {
+  if (typeof value === 'string') {
+    const trimmed = value.trim()
+    return trimmed.length > 0 ? trimmed : null
+  }
+
+  if (!value || typeof value !== 'object') {
+    return null
+  }
+
+  const record = value as UnknownRecord
+
+  for (const key of ['url', 'path', 'src', 'image', 'image_url']) {
+    const candidate = record[key]
+
+    if (typeof candidate === 'string' && candidate.trim().length > 0) {
+      return candidate.trim()
+    }
+  }
+
+  return null
+}
+
+export function resolveMediaUrl(path: unknown, fallback: string): string {
+  const resolvedPath = extractPath(path)
+
+  if (!resolvedPath) {
     return fallback
   }
 
   if (
-    path.startsWith('http://') ||
-    path.startsWith('https://') ||
-    path.startsWith('data:') ||
-    path.startsWith('blob:') ||
-    path.startsWith('/storage/')
+    resolvedPath.startsWith('http://') ||
+    resolvedPath.startsWith('https://') ||
+    resolvedPath.startsWith('data:') ||
+    resolvedPath.startsWith('blob:') ||
+    resolvedPath.startsWith('/storage/')
   ) {
-    return path
+    return resolvedPath
   }
 
-  return `/storage/${path.replace(/^\/+/, '')}`
+  return `/storage/${resolvedPath.replace(/^\/+/, '')}`
 }

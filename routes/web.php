@@ -25,15 +25,15 @@ Route::get('/', function () {
     $properties = \App\Models\Property::query()
         ->latest('id')
         ->get()
-        ->map(fn (\App\Models\Property $p) => [
-            'id'       => (string) $p->id,
-            'name'     => $p->nama_property ?: 'Property ' . $p->id,
+        ->map(fn(\App\Models\Property $p) => [
+            'id' => (string) $p->id,
+            'name' => $p->nama_property ?: 'Property ' . $p->id,
             'location' => $p->alamat ?: '-',
-            'slug'     => $p->slug ?: \Illuminate\Support\Str::slug((string) ($p->nama_property ?: 'property-' . $p->id)),
+            'slug' => $p->slug ?: \Illuminate\Support\Str::slug((string) ($p->nama_property ?: 'property-' . $p->id)),
             'kategori' => $p->kategori ?: 'Lainnya',
-            'image'    => collect($p->gambar_utama ?? [])
-                ->filter(fn ($path) => filled($path))
-                ->map(fn ($path) => ltrim((string) $path, '/'))
+            'image' => collect($p->gambar_utama ?? [])
+                ->filter(fn($path) => filled($path))
+                ->map(fn($path) => ltrim((string) $path, '/'))
                 ->values()
                 ->all(),
             'tipe_rumah' => is_array($p->tipe_rumah) ? $p->tipe_rumah : [],
@@ -46,39 +46,39 @@ Route::get('/', function () {
         ->latest('published_at')
         ->limit(4)
         ->get()
-        ->map(fn (\App\Models\BlogPost $p) => [
-            'id'       => $p->id,
-            'title'    => $p->title,
-            'excerpt'  => $p->excerpt,
-            'image'    => $p->image
+        ->map(fn(\App\Models\BlogPost $p) => [
+            'id' => $p->id,
+            'title' => $p->title,
+            'excerpt' => $p->excerpt,
+            'image' => $p->image
                 ? (str_starts_with($p->image, 'http') ? $p->image : '/storage/' . ltrim($p->image, '/'))
                 : null,
-            'date'     => $p->published_at ? $p->published_at->format('d M Y') : $p->created_at->format('d M Y'),
+            'date' => $p->published_at ? $p->published_at->format('d M Y') : $p->created_at->format('d M Y'),
             'category' => $p->category?->name ?: 'Blog',
-            'slug'     => $p->slug,
+            'slug' => $p->slug,
         ]);
 
     $events = \App\Models\Event::where('is_published', true)
         ->latest('event_date')
         ->limit(3)
         ->get()
-        ->map(fn (\App\Models\Event $e) => [
-            'id'          => $e->id,
-            'title'       => $e->title,
+        ->map(fn(\App\Models\Event $e) => [
+            'id' => $e->id,
+            'title' => $e->title,
             'description' => $e->description,
-            'image'       => $e->image ? '/storage/' . ltrim($e->image, '/') : null,
-            'date'        => $e->event_date ? $e->event_date->format('d M Y') : '-',
-            'category'    => 'Event',
-            'slug'        => $e->slug,
+            'image' => $e->image ? '/storage/' . ltrim($e->image, '/') : null,
+            'date' => $e->event_date ? $e->event_date->format('d M Y') : '-',
+            'category' => 'Event',
+            'slug' => $e->slug,
         ]);
 
     return Inertia::render('welcome', [
-        'page'       => $page,
+        'page' => $page,
         'properties' => $properties,
-        'articles'   => $articles,
-        'events'     => $events,
-        'faqs'       => \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get(),
-        'partners'   => \App\Models\Partner::where('is_active', true)->orderBy('sort_order')->get(),
+        'articles' => $articles,
+        'events' => $events,
+        'faqs' => \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get(),
+        'partners' => \App\Models\Partner::where('is_active', true)->orderBy('sort_order')->get(),
     ]);
 })->name('home');
 
@@ -227,10 +227,10 @@ Route::get('/property/{slug}', function ($slug) {
         $tipeRumah = is_array($propertyModel->tipe_rumah) ? $propertyModel->tipe_rumah : [];
         $tipeRumah = array_map(function ($t) {
             return [
-                'name'        => $t['name'] ?? '',
-                'sqft'        => isset($t['sqft']) ? (int) $t['sqft'] : null,
-                'bedrooms'    => isset($t['bedrooms']) ? (int) $t['bedrooms'] : null,
-                'bathrooms'   => isset($t['bathrooms']) ? (int) $t['bathrooms'] : null,
+                'name' => $t['name'] ?? '',
+                'sqft' => isset($t['sqft']) ? (int) $t['sqft'] : null,
+                'bedrooms' => isset($t['bedrooms']) ? (int) $t['bedrooms'] : null,
+                'bathrooms' => isset($t['bathrooms']) ? (int) $t['bathrooms'] : null,
                 'description' => $t['description'] ?? '',
                 'gambar_denah' => isset($t['gambar_denah']) ? '/storage/' . ltrim((string) $t['gambar_denah'], '/') : null,
             ];
@@ -239,28 +239,28 @@ Route::get('/property/{slug}', function ($slug) {
         $propertyProgress = is_array($propertyModel->property_progress) ? $propertyModel->property_progress : [];
         $propertyProgress = array_map(function ($p) {
             return [
-                'month'      => $p['month'] ?? '',
-                'label'      => $p['label'] ?? '',
+                'month' => $p['month'] ?? '',
+                'label' => $p['label'] ?? '',
                 'percentage' => isset($p['percentage']) ? (int) $p['percentage'] : 0,
-                'image'      => isset($p['image']) ? '/storage/' . ltrim((string) $p['image'], '/') : null,
+                'image' => isset($p['image']) ? '/storage/' . ltrim((string) $p['image'], '/') : null,
             ];
         }, $propertyProgress);
 
         $fasilitasProperty = is_array($propertyModel->fasilitas_property) ? $propertyModel->fasilitas_property : [];
 
         $propertyData = [
-            'name'               => $propertyModel->nama_property ?: 'Property ' . $propertyModel->id,
-            'slug'               => $propertyModel->slug ?: \Illuminate\Support\Str::slug((string) ($propertyModel->nama_property ?: 'property-' . $propertyModel->id)),
-            'category'           => $propertyModel->kategori,
-            'price'              => $propertyModel->harga_mulai ? 'Rp ' . number_format((int) $propertyModel->harga_mulai, 0, ',', '.') : '-',
-            'images'             => $images,
-            'description'        => $propertyModel->deskripsi_property ?: 'Deskripsi properti belum tersedia.',
-            'alamat'             => $propertyModel->alamat ?: '',
-            'whatsapp_number'    => $propertyModel->whatsapp_number,
+            'name' => $propertyModel->nama_property ?: 'Property ' . $propertyModel->id,
+            'slug' => $propertyModel->slug ?: \Illuminate\Support\Str::slug((string) ($propertyModel->nama_property ?: 'property-' . $propertyModel->id)),
+            'category' => $propertyModel->kategori,
+            'price' => $propertyModel->harga_mulai ? 'Rp ' . number_format((int) $propertyModel->harga_mulai, 0, ',', '.') : '-',
+            'images' => $images,
+            'description' => $propertyModel->deskripsi_property ?: 'Deskripsi properti belum tersedia.',
+            'alamat' => $propertyModel->alamat ?: '',
+            'whatsapp_number' => $propertyModel->whatsapp_number,
             'fasilitas_property' => $fasilitasProperty,
-            'tipe_rumah'         => $tipeRumah,
-            'lokasi_maps_embed'  => $propertyModel->lokasi_maps_embed,
-            'property_progress'  => $propertyProgress,
+            'tipe_rumah' => $tipeRumah,
+            'lokasi_maps_embed' => $propertyModel->lokasi_maps_embed,
+            'property_progress' => $propertyProgress,
         ];
         $propertyId = $propertyModel->id;
     } else {
@@ -290,7 +290,7 @@ Route::get('/property/{slug}', function ($slug) {
         ->all();
 
     // Removed dummy other properties fallback
-    $otherProperties = collect($otherProperties)->filter(fn($o) => (string)$o['id'] !== (string)$propertyId)->values()->all();
+    $otherProperties = collect($otherProperties)->filter(fn($o) => (string) $o['id'] !== (string) $propertyId)->values()->all();
 
     return Inertia::render('PropertyDetail', [
         'property' => $propertyData,
@@ -356,18 +356,38 @@ Route::get('/event-csr', function () {
 Route::get('/about', function () {
     $page = \App\Models\Page::where('slug', 'about')->where('is_active', true)->first();
 
+    if ($page && is_array($page->content)) {
+        $content = $page->content;
+
+        foreach ($content as &$block) {
+            if (!isset($block['data']) || !is_array($block['data'])) {
+                continue;
+            }
+
+            if (isset($block['data']['image_id']) && is_numeric($block['data']['image_id'])) {
+                $media = \Awcodes\Curator\Models\Media::find((int) $block['data']['image_id']);
+
+                if ($media?->path) {
+                    $block['data']['image_url'] = '/storage/' . ltrim((string) $media->path, '/');
+                }
+            }
+        }
+
+        $page->content = $content;
+    }
+
     $properties = \App\Models\Property::query()
         ->latest('id')
         ->limit(3)
         ->get()
-        ->map(fn (\App\Models\Property $p) => [
-            'id'         => (string) $p->id,
-            'name'       => $p->nama_property ?: 'Property ' . $p->id,
-            'location'   => $p->alamat ?: '-',
-            'slug'       => $p->slug ?: \Illuminate\Support\Str::slug((string) ($p->nama_property ?: 'property-' . $p->id)),
-            'image'      => collect($p->gambar_utama ?? [])
-                ->filter(fn ($path) => filled($path))
-                ->map(fn ($path) => ltrim((string) $path, '/'))
+        ->map(fn(\App\Models\Property $p) => [
+            'id' => (string) $p->id,
+            'name' => $p->nama_property ?: 'Property ' . $p->id,
+            'location' => $p->alamat ?: '-',
+            'slug' => $p->slug ?: \Illuminate\Support\Str::slug((string) ($p->nama_property ?: 'property-' . $p->id)),
+            'image' => collect($p->gambar_utama ?? [])
+                ->filter(fn($path) => filled($path))
+                ->map(fn($path) => ltrim((string) $path, '/'))
                 ->values()
                 ->all(),
             'tipe_rumah' => is_array($p->tipe_rumah) ? $p->tipe_rumah : [],
@@ -376,12 +396,12 @@ Route::get('/about', function () {
         ->all();
 
     return Inertia::render('About', [
-        'page'       => $page,
+        'page' => $page,
         'properties' => $properties,
-        'media'      => [
+        'media' => [
             'about_hero' => MediaHelper::url('about-hero', '/storage/media/about-hero.jpg'),
             'about_team' => MediaHelper::url('about-team', '/storage/media/about-team.jpg'),
-            'office'     => MediaHelper::url('office', '/storage/media/office.jpg'),
+            'office' => MediaHelper::url('office', '/storage/media/office.jpg'),
         ],
     ]);
 })->name('about.index');
@@ -391,16 +411,16 @@ Route::get('/artikel', function () {
         ->with('category')
         ->latest('published_at')
         ->get()
-        ->map(fn (\App\Models\BlogPost $post) => [
-            'id'       => $post->id,
-            'title'    => $post->title,
-            'excerpt'  => $post->excerpt,
-            'image'    => $post->image
+        ->map(fn(\App\Models\BlogPost $post) => [
+            'id' => $post->id,
+            'title' => $post->title,
+            'excerpt' => $post->excerpt,
+            'image' => $post->image
                 ? (str_starts_with($post->image, 'http') ? $post->image : '/storage/' . ltrim($post->image, '/'))
                 : null,
-            'date'     => $post->published_at ? $post->published_at->format('d M Y') : $post->created_at->format('d M Y'),
+            'date' => $post->published_at ? $post->published_at->format('d M Y') : $post->created_at->format('d M Y'),
             'category' => $post->category?->name ?: 'Uncategorized',
-            'slug'     => $post->slug,
+            'slug' => $post->slug,
         ]);
 
     $categories = \App\Models\BlogCategory::where('is_visible', true)
@@ -408,9 +428,9 @@ Route::get('/artikel', function () {
         ->pluck('name');
 
     return Inertia::render('Artikel', [
-        'articles'   => $articles,
+        'articles' => $articles,
         'categories' => $categories,
-        'media'      => [
+        'media' => [
             'blog_hero' => MediaHelper::url('blog-1', '/storage/media/blog-1.jpg'),
         ],
     ]);
@@ -431,7 +451,7 @@ Route::get('/event-csr/{type}/{slug}', function ($type, $slug) {
                 'category' => 'Event',
                 'slug' => $model->slug
             ];
-            $latestItems = $latest->map(function($m) {
+            $latestItems = $latest->map(function ($m) {
                 return [
                     'id' => $m->id,
                     'title' => $m->title,
@@ -449,8 +469,9 @@ Route::get('/event-csr/{type}/{slug}', function ($type, $slug) {
                 ['id' => 2, 'title' => "BRI Expo", 'description' => "Temukan properti impian lebih mudah di BRI Expo 2025. Sinar Mas Land hadir dengan kemudahan dan promo menarik untuk hunian keluarga Anda.", 'image' => "/storage/media/event-2.jpg", 'date' => "31 Agt 2025", 'category' => 'Event', 'slug' => "2", 'content' => '<p>Temukan properti impian lebih mudah di BRI Expo 2025. Sinar Mas Land hadir dengan kemudahan dan promo menarik untuk hunian keluarga Anda.</p>'],
                 ['id' => 3, 'title' => "BNI EXPO", 'description' => "Temukan hunian impian di BNI wondrX 2025 bersama Sinar Mas Land. Nikmati promo eksklusif, bunga rendah, cashback, dan lucky draw menarik!", 'image' => "/storage/media/event-3.jpg", 'date' => "17 Agt 2025", 'category' => 'Event', 'slug' => "3", 'content' => '<p>Temukan hunian impian di BNI wondrX 2025 bersama Sinar Mas Land. Nikmati promo eksklusif, bunga rendah, cashback, dan lucky draw menarik!</p>']
             ];
-            $item = collect($dummyEvents)->filter(fn($e) => (string)$e['id'] === $slug || $e['slug'] === $slug)->first();
-            if (!$item) abort(404);
+            $item = collect($dummyEvents)->filter(fn($e) => (string) $e['id'] === $slug || $e['slug'] === $slug)->first();
+            if (!$item)
+                abort(404);
             $latestItems = collect($dummyEvents)->where('id', '!=', $item['id'])->take(3)->values()->toArray();
         }
     } else {
@@ -467,7 +488,7 @@ Route::get('/event-csr/{type}/{slug}', function ($type, $slug) {
                 'category' => 'CSR',
                 'slug' => $model->slug
             ];
-            $latestItems = $latest->map(function($m) {
+            $latestItems = $latest->map(function ($m) {
                 return [
                     'id' => $m->id,
                     'title' => $m->title,
@@ -486,8 +507,9 @@ Route::get('/event-csr/{type}/{slug}', function ($type, $slug) {
                 ['id' => 3, 'title' => "Beasiswa Pendidikan Anak Bangsa", 'description' => "Program beasiswa pendidikan bagi anak-anak berprestasi dari keluarga prasejahtera.", 'image' => "/storage/media/csr-3.jpg", 'category' => "Pendidikan", 'date' => "Tahun Ajaran 2026", 'slug' => "3", 'content' => '<p>Program beasiswa pendidikan bagi anak-anak berprestasi dari keluarga prasejahtera di sekitar kawasan pengembangan Quinland Grup.</p>'],
                 ['id' => 4, 'title' => "Layanan Kesehatan Masyarakat", 'description' => "Kegiatan pemeriksaan kesehatan gratis dan penyuluhan gizi untuk warga di sekitar proyek pengembangan.", 'image' => "/storage/media/csr-4.jpg", 'category' => "Kesehatan", 'date' => "Quarterly", 'slug' => "4", 'content' => '<p>Kegiatan pemeriksaan kesehatan gratis dan penyuluhan gizi untuk warga di sekitar proyek pengembangan, bekerja sama dengan rumah sakit dan tenaga medis profesional.</p>']
             ];
-            $item = collect($dummyCsrs)->filter(fn($c) => (string)$c['id'] === $slug || $c['slug'] === $slug)->first();
-            if (!$item) abort(404);
+            $item = collect($dummyCsrs)->filter(fn($c) => (string) $c['id'] === $slug || $c['slug'] === $slug)->first();
+            if (!$item)
+                abort(404);
             $latestItems = collect($dummyCsrs)->where('id', '!=', $item['id'])->take(3)->values()->toArray();
         }
     }
@@ -504,7 +526,7 @@ Route::get('/event-csr/{type}/{slug}', function ($type, $slug) {
 
 Route::get('/artikel/{slug}', function ($slug) {
     $model = \App\Models\BlogPost::where('slug', $slug)->published()->first();
-    
+
     if ($model) {
         $item = [
             'id' => $model->id,
@@ -516,14 +538,14 @@ Route::get('/artikel/{slug}', function ($slug) {
             'category' => $model->category?->name ?: 'Blog',
             'slug' => $model->slug
         ];
-        
+
         $latest = \App\Models\BlogPost::published()
             ->where('id', '!=', $model->id)
             ->latest('published_at')
             ->limit(3)
             ->get();
-            
-        $latestItems = $latest->map(function($m) {
+
+        $latestItems = $latest->map(function ($m) {
             return [
                 'id' => $m->id,
                 'title' => $m->title,
@@ -540,9 +562,10 @@ Route::get('/artikel/{slug}', function ($slug) {
             ['id' => 3, 'title' => "Aerium Residence, Apartemen untuk Milenial, Pet Friendly & Modern", 'excerpt' => "Apartemen Jakarta Barat Aerium hadir dengan konsep pet-friendly...", 'image' => "/storage/media/blog-3.jpg", 'date' => "16 Feb 2026", 'category' => "Blog", 'slug' => '3', 'content' => '<p>Konten artikel lengkap tentang Aerium Residence...</p>'],
             ['id' => 4, 'title' => "Tips Memilih Rumah Idaman dengan Budget Terbatas", 'excerpt' => "Panduan lengkap memilih rumah impian...", 'image' => "/storage/media/blog-4.jpg", 'date' => "15 Feb 2026", 'category' => "Tips", 'slug' => '4', 'content' => '<p>Konten artikel lengkap tentang tips memilih rumah...</p>'],
         ];
-        
-        $item = collect($dummyArticles)->filter(fn($a) => (string)$a['id'] === $slug || $a['slug'] === $slug)->first();
-        if (!$item) abort(404);
+
+        $item = collect($dummyArticles)->filter(fn($a) => (string) $a['id'] === $slug || $a['slug'] === $slug)->first();
+        if (!$item)
+            abort(404);
         $latestItems = collect($dummyArticles)->where('id', '!=', $item['id'])->take(3)->values()->toArray();
     }
 
@@ -569,12 +592,12 @@ Route::get('/proyek', function () {
                 ->all();
 
             return [
-                'id'         => (string) $property->id,
-                'name'       => $property->nama_property ?: 'Property ' . $property->id,
-                'location'   => $property->alamat ?: '-',
-                'slug'       => $property->slug ?: \Illuminate\Support\Str::slug((string) ($property->nama_property ?: 'property-' . $property->id)),
-                'image'      => $images,
-                'kategori'   => $property->kategori,
+                'id' => (string) $property->id,
+                'name' => $property->nama_property ?: 'Property ' . $property->id,
+                'location' => $property->alamat ?: '-',
+                'slug' => $property->slug ?: \Illuminate\Support\Str::slug((string) ($property->nama_property ?: 'property-' . $property->id)),
+                'image' => $images,
+                'kategori' => $property->kategori,
                 'harga_mulai' => $property->harga_mulai ? 'Rp ' . number_format((int) $property->harga_mulai, 0, ',', '.') : null,
                 'tipe_rumah' => is_array($property->tipe_rumah) ? $property->tipe_rumah : [],
             ];
@@ -583,7 +606,7 @@ Route::get('/proyek', function () {
         ->all();
 
     return Inertia::render('Proyek', [
-        'page'       => $page,
+        'page' => $page,
         'properties' => $properties,
     ]);
 })->name('proyek.index');
