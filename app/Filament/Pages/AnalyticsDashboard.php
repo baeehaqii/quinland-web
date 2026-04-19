@@ -10,7 +10,7 @@ use App\Filament\Widgets\AnalyticsSessionsChart;
 class AnalyticsDashboard extends Dashboard
 {
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-presentation-chart-line';
-    protected static ?string $navigationLabel = 'Google Analytics';
+    protected static ?string $navigationLabel = 'Google Analyticss';
     protected static \UnitEnum|string|null $navigationGroup = 'Settings';
     protected static ?string $title = 'Google Analytics Dashboard';
 
