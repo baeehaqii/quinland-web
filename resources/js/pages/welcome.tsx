@@ -12,7 +12,7 @@ import { FaqSection } from "@/v0-ui-quinland/components/faq/faq-section"
 export default function Welcome({ page, properties = [], faqs }: any) {
     return (
         <>
-            <Head title={page?.seo_title || "Quinland Grup"} />
+            <Head title={page?.seo_title || "Quinland Group - For a Better Life"} />
             <Navbar />
             <main>
                 <HeroSection />

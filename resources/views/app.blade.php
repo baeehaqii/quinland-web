@@ -4,6 +4,8 @@
 <head>
     @php
         $siteFaviconUrl = null;
+        $headerScripts = null;
+        $bodyScripts = null;
 
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
@@ -12,6 +14,9 @@
                 if (filled($settings->site_favicon)) {
                     $siteFaviconUrl = asset('storage/' . ltrim((string) $settings->site_favicon, '/'));
                 }
+
+                $headerScripts = $settings->header_scripts ?? null;
+                $bodyScripts = $settings->body_scripts ?? null;
             }
         } catch (\Throwable $e) {
             // Keep fallback favicon when settings are not available.
@@ -21,7 +26,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title inertia>{{ config('app.name', 'Quinland') }}</title>
+    <title inertia>Quinland Group - For a Better Life</title>
 
     @if ($siteFaviconUrl)
         <link rel="icon" href="{{ $siteFaviconUrl }}" sizes="any">
@@ -38,9 +43,17 @@
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
     @inertiaHead
+
+    @if ($headerScripts)
+        {!! $headerScripts !!}
+    @endif
 </head>
 
 <body class="font-sans antialiased">
+    @if ($bodyScripts)
+        {!! $bodyScripts !!}
+    @endif
+
     @inertia
 </body>
 

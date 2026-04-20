@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, Head } from '@inertiajs/react';
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useState, useEffect } from 'react';
 
@@ -109,6 +109,7 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
 
   return (
     <div className="min-h-screen bg-background">
+      <Head title={page?.title ? `${page.title} | Quinland Grup` : "Property | Quinland Grup"} />
       <Navbar />
 
       {/* Hero Carousel */}

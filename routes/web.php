@@ -174,6 +174,7 @@ Route::get('/property', function () {
                 'slug' => $property->slug ?: \Illuminate\Support\Str::slug((string) ($property->nama_property ?: 'property-' . $property->id)),
                 'image' => $images,
                 'tipe_rumah' => is_array($property->tipe_rumah) ? $property->tipe_rumah : [],
+                'kategori' => $property->kategori,
             ];
         })
         ->values()

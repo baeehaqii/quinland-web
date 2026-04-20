@@ -44,11 +44,8 @@ class PropertiesTable
                     ->label('Kategori')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
-                        'Residential' => 'success',
-                        'Apartment' => 'info',
+                        'FLPP' => 'success',
                         'Komersial' => 'warning',
-                        'Townhouse' => 'primary',
-                        'Ruko' => 'gray',
                         default => 'gray',
                     }),
 
@@ -93,11 +90,8 @@ class PropertiesTable
                 SelectFilter::make('kategori')
                     ->label('Kategori')
                     ->options([
-                        'Residential' => 'Residential',
-                        'Apartment' => 'Apartment',
+                        'FLPP' => 'FLPP',
                         'Komersial' => 'Komersial',
-                        'Townhouse' => 'Townhouse',
-                        'Ruko' => 'Ruko',
                     ]),
 
                 SelectFilter::make('unit_bisnis_id')

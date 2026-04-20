@@ -32,11 +32,8 @@ class PropertyForm
                             Select::make('kategori')
                                 ->label('Kategori')
                                 ->options([
-                                    'Residential' => 'Residential',
-                                    'Apartment' => 'Apartment',
+                                    'FLPP' => 'FLPP',
                                     'Komersial' => 'Komersial',
-                                    'Townhouse' => 'Townhouse',
-                                    'Ruko' => 'Ruko',
                                 ])
                                 ->columnSpan(1),
 
@@ -224,8 +221,8 @@ class PropertyForm
                         ]),
                 ])
 
-                ->columnSpanFull() ->skippable()
-                ->persistStepInQueryString(),
+                    ->columnSpanFull()->skippable()
+                    ->persistStepInQueryString(),
             ]);
     }
 }

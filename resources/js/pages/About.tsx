@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, Head } from '@inertiajs/react';
 import {
   ChevronRight,
   Eye,
@@ -62,6 +62,7 @@ export default function AboutPage({ media = {}, page = null, properties = [] }: 
 
   return (
     <>
+      <Head title="Tentang Kami | Quinland Grup" />
       <Navbar />
       <main className="bg-background">
         {/* ─── Hero Banner ─── */}

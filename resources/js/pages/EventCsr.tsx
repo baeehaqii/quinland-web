@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, Head } from '@inertiajs/react';
 import {
   ChevronRight,
   HeartPulse,
@@ -32,6 +32,7 @@ export default function EventCsrPage({ media = {}, events = [], csrs = [] }: Eve
 
   return (
     <>
+      <Head title="Event & CSR | Quinland Grup" />
       <Navbar />
       <main className="bg-background">
         {/* ─── Hero Banner ─── */}

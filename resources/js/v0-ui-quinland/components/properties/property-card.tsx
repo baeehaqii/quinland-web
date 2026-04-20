@@ -12,6 +12,7 @@ export interface Property {
     bathrooms: number;
   }>
   slug: string
+  kategori?: string
 }
 
 interface PropertyCardProps {
@@ -47,6 +48,18 @@ export function PropertyCard({ property }: PropertyCardProps) {
             {property.location}
           </span>
         </div>
+
+        {/* Kategori badge */}
+        {property.kategori && (
+          <div className="absolute left-3 top-3">
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${property.kategori === 'FLPP'
+                ? 'bg-emerald-500/90 text-white'
+                : 'bg-amber-500/90 text-white'
+              }`}>
+              {property.kategori}
+            </span>
+          </div>
+        )}
 
         {/* Default state */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-5 pb-5 pt-16 transition-opacity duration-400 ease-in-out group-hover:opacity-0">

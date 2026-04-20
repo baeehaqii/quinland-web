@@ -8,6 +8,18 @@ use Illuminate\Support\Str;
 
 class Property extends Model
 {
+    // ── Konstanta Kategori ────────────────────────────────────────────────
+    public const KATEGORI_FLPP = 'FLPP';
+    public const KATEGORI_KOMERSIAL = 'Komersial';
+
+    public static function getKategoriOptions(): array
+    {
+        return [
+            self::KATEGORI_FLPP => 'FLPP',
+            self::KATEGORI_KOMERSIAL => 'Komersial',
+        ];
+    }
+
     protected $fillable = [
         'unit_bisnis_id',
         'nama_property',
