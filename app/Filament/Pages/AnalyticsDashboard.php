@@ -4,8 +4,11 @@ namespace App\Filament\Pages;
 
 use BackedEnum;
 use Filament\Pages\Dashboard;
-use App\Filament\Widgets\AnalyticsStatsOverview;
-use App\Filament\Widgets\AnalyticsSessionsChart;
+use App\Filament\Widgets\AnalyticsRealtimeWidget;
+use App\Filament\Widgets\AnalyticsOverviewWidget;
+use App\Filament\Widgets\AnalyticsByPlatformWidget;
+use App\Filament\Widgets\AnalyticsByCityWidget;
+use App\Filament\Widgets\AnalyticsTopPagesWidget;
 
 class AnalyticsDashboard extends Dashboard
 {
@@ -22,11 +25,21 @@ class AnalyticsDashboard extends Dashboard
 
     protected static ?int $navigationSort = 100;
 
+    protected static bool $shouldRegisterNavigation = false;
+
+    public function getColumns(): int|array
+    {
+        return 2;
+    }
+
     public function getWidgets(): array
     {
         return [
-            AnalyticsStatsOverview::class,
-            AnalyticsSessionsChart::class,
+            AnalyticsRealtimeWidget::class,
+            AnalyticsOverviewWidget::class,
+            AnalyticsByPlatformWidget::class,
+            AnalyticsByCityWidget::class,
+            AnalyticsTopPagesWidget::class,
         ];
     }
 }
