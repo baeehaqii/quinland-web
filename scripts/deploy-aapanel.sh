@@ -77,6 +77,8 @@ fi
 "$PHP_BIN" artisan view:cache
 "$PHP_BIN" artisan filament:optimize || true
 "$PHP_BIN" artisan queue:restart || true
+/www/server/panel/pyenv/bin/supervisorctl start quinland-worker 2>/dev/null || \
+  /www/server/panel/pyenv/bin/supervisorctl restart quinland-worker 2>/dev/null || true
 
 # Permissions.
 chown -R "$WEB_USER":"$WEB_GROUP" . || true
