@@ -78,7 +78,18 @@ Route::get('/', function () {
         'articles' => $articles,
         'events' => $events,
         'faqs' => \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get(),
-        'partners' => \App\Models\Partner::where('is_active', true)->orderBy('sort_order')->get(),
+        'partners' => \App\Models\Partner::where('is_active', true)->orderBy('sort_order')->get()->map(function ($p) {
+            $logo = $p->logo;
+            if ($logo && !str_starts_with($logo, 'http')) {
+                $logo = '/storage/' . ltrim($logo, '/');
+            }
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'logo' => $logo,
+                'website_url' => $p->website_url,
+            ];
+        }),
     ]);
 })->name('home');
 
@@ -529,15 +540,23 @@ Route::get('/artikel/{slug}', function ($slug) {
     $model = \App\Models\BlogPost::where('slug', $slug)->published()->first();
 
     if ($model) {
+        $imageUrl = $model->image
+            ? (str_starts_with($model->image, 'http') ? $model->image : url('/storage/' . ltrim($model->image, '/')))
+            : null;
+
         $item = [
             'id' => $model->id,
             'title' => $model->title,
             'excerpt' => $model->excerpt,
             'content' => $model->content,
-            'image' => $model->image ? (str_starts_with($model->image, 'http') ? $model->image : '/storage/' . ltrim($model->image, '/')) : null,
+            'image' => $imageUrl ? (str_starts_with($imageUrl, 'http') ? $imageUrl : '/storage/' . ltrim($model->image, '/')) : null,
+            'og_image' => $imageUrl,
+            'og_url' => route('artikel.show', $model->slug),
             'date' => $model->published_at ? $model->published_at->format('d M Y') : $model->created_at->format('d M Y'),
             'category' => $model->category?->name ?: 'Blog',
-            'slug' => $model->slug
+            'author' => $model->author?->name ?: 'Quinland Editorial Team',
+            'slug' => $model->slug,
+            'cta_whatsapp' => (bool) $model->cta_whatsapp,
         ];
 
         $latest = \App\Models\BlogPost::published()

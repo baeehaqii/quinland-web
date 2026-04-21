@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BlogPosts\Tables;
 
 use App\Filament\Resources\BlogPosts\BlogPostResource;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -88,6 +89,16 @@ class BlogPostsTable
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
+                Action::make('archive')
+                    ->label('Arsipkan')
+                    ->icon('heroicon-o-archive-box')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Arsipkan Artikel')
+                    ->modalDescription('Artikel ini tidak akan muncul di frontend setelah diarsipkan. Lanjutkan?')
+                    ->modalSubmitActionLabel('Ya, Arsipkan')
+                    ->action(fn($record) => $record->update(['status' => 'archived']))
+                    ->hidden(fn($record) => $record->status === 'archived'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

@@ -15,7 +15,11 @@ class PartnerForm
                 TextInput::make('name')
                     ->required(),
                 \Filament\Forms\Components\FileUpload::make('logo')
-                    ->image(),
+                    ->image()
+                    ->acceptedFileTypes(['image/png'])
+                    ->maxSize(1024)
+                    ->helperText('Hanya format PNG. Maks. 1 MB.')
+                    ->directory('partners'),
                 TextInput::make('website_url')
                     ->url(),
                 TextInput::make('sort_order')

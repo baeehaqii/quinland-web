@@ -127,7 +127,7 @@ function ResendTimer({
 // ---------------------------------------------------------------------------
 interface BookingSidebarProps {
   price?: string
-  propertyId: string | number
+  propertyId?: string | number
 }
 
 export function BookingSidebar({ price, propertyId }: BookingSidebarProps) {
@@ -207,9 +207,9 @@ export function BookingSidebar({ price, propertyId }: BookingSidebarProps) {
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
           {isSuccess ? (
             <div className="flex flex-col items-center text-center animate-in fade-in zoom-in duration-500">
-               <div className="flex size-16 items-center justify-center rounded-full bg-green-100 mb-4">
-                  <CheckCircle className="size-9 text-green-600" />
-                </div>
+              <div className="flex size-16 items-center justify-center rounded-full bg-green-100 mb-4">
+                <CheckCircle className="size-9 text-green-600" />
+              </div>
               <h3 className="text-lg font-bold text-foreground">
                 Permintaan Berhasil Disimpan!
               </h3>
