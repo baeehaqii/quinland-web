@@ -15,6 +15,7 @@ class BlogPost extends Model
 
     protected $casts = [
         'published_at' => 'date',
+        'cta_whatsapp' => 'boolean',
     ];
 
     public function author(): BelongsTo
