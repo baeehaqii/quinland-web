@@ -142,8 +142,10 @@ function FeaturedSlider({ articles }: { articles: Article[] }) {
 
 export default function ArtikelPage({ articles = [], categories = [], media = {} }: ArtikelPageProps) {
   const heroImage = resolveMediaUrl(media.blog_hero, "/storage/media/blog-1.jpg")
+  const articlesPerPage = 8
 
   const [activeCategory, setActiveCategory] = useState<string>('Semua')
+  const [currentPage, setCurrentPage] = useState(1)
 
   const allCategories = ['Semua', ...categories]
 
@@ -152,7 +154,18 @@ export default function ArtikelPage({ articles = [], categories = [], media = {}
     : articles.filter(a => a.category === activeCategory)
 
   const featured = filtered.slice(0, 3)
-  const rest = filtered.slice(3)
+  const paginatedArticles = filtered.slice((currentPage - 1) * articlesPerPage, currentPage * articlesPerPage)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / articlesPerPage))
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeCategory])
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [currentPage, totalPages])
 
   return (
     <>
@@ -224,7 +237,7 @@ export default function ArtikelPage({ articles = [], categories = [], media = {}
             <>
               {featured.length > 0 && <FeaturedSlider articles={featured} />}
 
-              {rest.length > 0 && (
+              {paginatedArticles.length > 0 && (
                 <section>
                   <div className="mb-6 flex items-center justify-between">
                     <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -235,8 +248,8 @@ export default function ArtikelPage({ articles = [], categories = [], media = {}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {rest.map((article) => (
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+                    {paginatedArticles.map((article) => (
                       <article key={article.id} className="group">
                         <Link href={`/artikel/${article.slug}`} className="block">
                           <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
@@ -266,6 +279,54 @@ export default function ArtikelPage({ articles = [], categories = [], media = {}
                       </article>
                     ))}
                   </div>
+
+                  {totalPages > 1 && (
+                    <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
+                      <p className="text-sm text-muted-foreground">
+                        Menampilkan {((currentPage - 1) * articlesPerPage) + 1}-{Math.min(currentPage * articlesPerPage, filtered.length)} dari {filtered.length} artikel
+                      </p>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                          disabled={currentPage === 1}
+                          className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-semibold text-foreground transition-colors hover:border-emerald-700 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          <ChevronLeft className="mr-1 size-4" />
+                          Prev
+                        </button>
+
+                        <div className="flex items-center gap-2">
+                          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                            <button
+                              key={page}
+                              type="button"
+                              onClick={() => setCurrentPage(page)}
+                              className={[
+                                'inline-flex h-10 min-w-10 items-center justify-center rounded-xl px-3 text-sm font-semibold transition-colors',
+                                currentPage === page
+                                  ? 'bg-emerald-700 text-white'
+                                  : 'border border-border bg-card text-foreground hover:border-emerald-700 hover:text-emerald-700',
+                              ].join(' ')}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                          disabled={currentPage === totalPages}
+                          className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-semibold text-foreground transition-colors hover:border-emerald-700 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Next
+                          <ChevronRight className="ml-1 size-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </section>
               )}
             </>

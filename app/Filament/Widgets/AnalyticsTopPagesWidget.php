@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Spatie\Analytics\Facades\Analytics;
 use Spatie\Analytics\OrderBy;
@@ -20,10 +21,12 @@ class AnalyticsTopPagesWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    protected string|int|null $defaultTableRecordsPerPageSelectOption = 5;
+
     public function table(Table $table): Table
     {
         return $table
-            ->records(fn() => $this->getPageData())
+            ->records(fn() => $this->getPaginatedPageData())
             ->columns([
                 Tables\Columns\TextColumn::make('rank')
                     ->label('#')
@@ -40,8 +43,7 @@ class AnalyticsTopPagesWidget extends BaseWidget
                     ->label('Users')
                     ->numeric(),
             ])
-            ->paginated([5, 10, 25])
-            ->defaultPaginationPageOption(5);
+            ->paginated([5, 10, 25]);
     }
 
     protected function getPageData(): Collection
@@ -51,7 +53,7 @@ class AnalyticsTopPagesWidget extends BaseWidget
                 period: Period::days(30),
                 metrics: ['screenPageViews', 'activeUsers'],
                 dimensions: ['pageTitle', 'pagePath'],
-                maxResults: 25,
+                maxResults: 50,
                 orderBy: [OrderBy::metric('screenPageViews', true)],
             )
                 ->values()
@@ -66,5 +68,19 @@ class AnalyticsTopPagesWidget extends BaseWidget
         } catch (\Throwable $e) {
             return collect();
         }
+    }
+
+    protected function getPaginatedPageData(): LengthAwarePaginator
+    {
+        $all = $this->getPageData();
+        $perPage = $this->getTableRecordsPerPage() ?: 5;
+        $page = $this->getTablePage();
+
+        return new LengthAwarePaginator(
+            items: $all->forPage($page, $perPage)->values(),
+            total: $all->count(),
+            perPage: $perPage,
+            currentPage: $page,
+        );
     }
 }
