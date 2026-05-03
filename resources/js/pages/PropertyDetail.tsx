@@ -32,6 +32,7 @@ interface PropertyDetailData {
   price: string
   images: string[]
   description: string
+  promo_unit_rumah?: string | null
   alamat?: string
   whatsapp_number?: string | null
   fasilitas_property?: Array<{ label: string }>
@@ -107,6 +108,7 @@ export default function PropertyDetailPage({ property, otherProperties = [], pro
             <PropertyTabs
               name={property.name}
               description={property.description}
+              promoUnitRumah={property.promo_unit_rumah}
               alamat={property.alamat}
               fasilitasProperty={property.fasilitas_property ?? []}
               tipeRumah={property.tipe_rumah ?? []}

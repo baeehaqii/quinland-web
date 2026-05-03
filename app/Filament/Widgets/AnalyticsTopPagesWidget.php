@@ -40,7 +40,8 @@ class AnalyticsTopPagesWidget extends BaseWidget
                     ->label('Users')
                     ->numeric(),
             ])
-            ->paginated([10, 25]);
+            ->paginated([5, 10, 25])
+            ->defaultPaginationPageOption(5);
     }
 
     protected function getPageData(): Collection

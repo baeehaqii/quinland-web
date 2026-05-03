@@ -34,7 +34,8 @@ class AnalyticsByCityWidget extends BaseWidget
                     ->label('Users')
                     ->numeric(),
             ])
-            ->paginated(false);
+            ->paginated([5, 10, 20])
+            ->defaultPaginationPageOption(5);
     }
 
     protected function getCityData(): Collection

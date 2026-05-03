@@ -267,6 +267,7 @@ Route::get('/property/{slug}', function ($slug) {
             'price' => $propertyModel->harga_mulai ? 'Rp ' . number_format((int) $propertyModel->harga_mulai, 0, ',', '.') : '-',
             'images' => $images,
             'description' => $propertyModel->deskripsi_property ?: 'Deskripsi properti belum tersedia.',
+            'promo_unit_rumah' => $propertyModel->promo_unit_rumah ?: null,
             'alamat' => $propertyModel->alamat ?: '',
             'whatsapp_number' => $propertyModel->whatsapp_number,
             'fasilitas_property' => $fasilitasProperty,
@@ -586,6 +587,8 @@ Route::get('/artikel/{slug}', function ($slug) {
         $item = collect($dummyArticles)->filter(fn($a) => (string) $a['id'] === $slug || $a['slug'] === $slug)->first();
         if (!$item)
             abort(404);
+        $item['og_image'] = url($item['image']);
+        $item['og_url'] = route('artikel.show', $item['slug']);
         $latestItems = collect($dummyArticles)->where('id', '!=', $item['id'])->take(3)->values()->toArray();
     }
 

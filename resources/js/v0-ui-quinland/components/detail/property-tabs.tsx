@@ -57,6 +57,7 @@ function isScrollTab(tab: Tab): tab is (typeof SCROLL_TABS)[number] {
 interface PropertyTabsProps {
   name: string
   description: string
+  promoUnitRumah?: string | null
   alamat?: string
   fasilitasProperty?: Array<{ label: string }>
   tipeRumah?: TipeRumah[]
@@ -67,6 +68,7 @@ interface PropertyTabsProps {
 export function PropertyTabs({
   name,
   description,
+  promoUnitRumah,
   alamat,
   fasilitasProperty = [],
   tipeRumah = [],
@@ -154,11 +156,10 @@ export function PropertyTabs({
               key={tab}
               type="button"
               onClick={() => handleTabClick(tab)}
-              className={`shrink-0 whitespace-nowrap pb-3 pt-3 text-sm font-medium transition-colors ${
-                activeTab === tab
+              className={`shrink-0 whitespace-nowrap pb-3 pt-3 text-sm font-medium transition-colors ${activeTab === tab
                   ? "border-b-2 border-foreground text-foreground"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               {tab}
             </button>
@@ -201,6 +202,16 @@ export function PropertyTabs({
                 {expanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
               </button>
             </div>
+
+            {/* Promo */}
+            {promoUnitRumah && (
+              <div className="mt-6 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4">
+                <span className="mt-0.5 shrink-0 rounded-full bg-emerald-600 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-white">
+                  Promo
+                </span>
+                <p className="text-sm leading-relaxed text-emerald-800">{promoUnitRumah}</p>
+              </div>
+            )}
           </section>
 
           {/* Facilities */}
