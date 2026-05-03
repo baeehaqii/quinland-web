@@ -22,24 +22,53 @@ Route::get('/', function () {
         $page->content = $content;
     }
 
-    $properties = \App\Models\Property::query()
-        ->latest('id')
-        ->get()
-        ->map(fn(\App\Models\Property $p) => [
-            'id' => (string) $p->id,
-            'name' => $p->nama_property ?: 'Property ' . $p->id,
-            'location' => $p->alamat ?: '-',
-            'slug' => $p->slug ?: \Illuminate\Support\Str::slug((string) ($p->nama_property ?: 'property-' . $p->id)),
-            'kategori' => $p->kategori ?: 'Lainnya',
-            'image' => collect($p->gambar_utama ?? [])
-                ->filter(fn($path) => filled($path))
-                ->map(fn($path) => ltrim((string) $path, '/'))
-                ->values()
-                ->all(),
-            'tipe_rumah' => is_array($p->tipe_rumah) ? $p->tipe_rumah : [],
-        ])
-        ->values()
-        ->all();
+    // Single query with eager-loaded unitBisnis (prevents N+1)
+    $allProps = \App\Models\Property::with('unitBisnis')->latest('id')->get();
+
+    // Helper: extract city-level label from full address string
+    $extractCity = function (string $alamat): string {
+        if (preg_match('/(?:Kec\.|Kecamatan)\s*([^,]+),\s*([^,\n]+)/i', $alamat, $m)) {
+            return trim($m[1]) . ', ' . trim($m[2]);
+        }
+        $parts = array_values(array_filter(array_map('trim', explode(',', $alamat))));
+        $count = count($parts);
+        return $count >= 2 ? $parts[$count - 2] . ', ' . $parts[$count - 1] : $alamat;
+    };
+
+    // Build searchMeta for dropdown options (no extra DB queries)
+    $searchMeta = [
+        'unit_bisnis' => $allProps
+            ->filter(fn($p) => $p->unitBisnis !== null)
+            ->map(fn($p) => $p->unitBisnis->nama_unit_bisnis)
+            ->unique()->values()->all(),
+        'kategori' => $allProps->pluck('kategori')->filter()->unique()->sort()->values()->all(),
+        'locations' => $allProps->pluck('alamat')->filter()
+            ->map(fn($a) => $extractCity((string) $a))
+            ->unique()->sort()->values()->all(),
+        'price_ranges' => [
+            ['label' => '< 200 Jt', 'min' => 0, 'max' => 200_000_000],
+            ['label' => '200 Jt - 500 Jt', 'min' => 200_000_000, 'max' => 500_000_000],
+            ['label' => '500 Jt - 1 M', 'min' => 500_000_000, 'max' => 1_000_000_000],
+            ['label' => '1 M - 2 M', 'min' => 1_000_000_000, 'max' => 2_000_000_000],
+            ['label' => '> 2 M', 'min' => 2_000_000_000, 'max' => null],
+        ],
+    ];
+
+    $properties = $allProps->map(fn(\App\Models\Property $p) => [
+        'id' => (string) $p->id,
+        'name' => $p->nama_property ?: 'Property ' . $p->id,
+        'location' => $p->alamat ?: '-',
+        'slug' => $p->slug ?: \Illuminate\Support\Str::slug((string) ($p->nama_property ?: 'property-' . $p->id)),
+        'kategori' => $p->kategori ?: 'Lainnya',
+        'harga_mulai' => $p->harga_mulai,
+        'unit_bisnis' => $p->unitBisnis?->nama_unit_bisnis,
+        'image' => collect($p->gambar_utama ?? [])
+            ->filter(fn($path) => filled($path))
+            ->map(fn($path) => ltrim((string) $path, '/'))
+            ->values()->all(),
+        'tipe_rumah' => is_array($p->tipe_rumah) ? $p->tipe_rumah : [],
+    ])
+        ->values()->all();
 
     $articles = \App\Models\BlogPost::published()
         ->with('category')
@@ -75,6 +104,7 @@ Route::get('/', function () {
     return Inertia::render('welcome', [
         'page' => $page,
         'properties' => $properties,
+        'searchMeta' => $searchMeta,
         'articles' => $articles,
         'events' => $events,
         'faqs' => \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get(),
@@ -93,7 +123,7 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('/property', function () {
+Route::get('/property', function (\Illuminate\Http\Request $request) {
     // 1. Ambil data page yang slug-nya 'property'
     $page = \App\Models\Page::where('slug', 'property')->where('is_active', true)->first();
 
@@ -167,10 +197,71 @@ Route::get('/property', function () {
         $page->content = $content;
     }
 
-    // 3. Ambil juga data properties buat ngerender kartu-kartu rumahnya
-    $properties = \App\Models\Property::query()
-        ->latest('id')
-        ->get()
+    // 3. Build searchMeta from ALL properties (single query, no N+1)
+    $extractCityProp = function (string $alamat): string {
+        if (preg_match('/(?:Kec\.|Kecamatan)\s*([^,]+),\s*([^,\n]+)/i', $alamat, $m)) {
+            return trim($m[1]) . ', ' . trim($m[2]);
+        }
+        $parts = array_values(array_filter(array_map('trim', explode(',', $alamat))));
+        $count = count($parts);
+        return $count >= 2 ? $parts[$count - 2] . ', ' . $parts[$count - 1] : $alamat;
+    };
+
+    $allPropsForMeta = \App\Models\Property::with('unitBisnis')->get();
+    $searchMeta = [
+        'unit_bisnis' => $allPropsForMeta
+            ->filter(fn($p) => $p->unitBisnis !== null)
+            ->map(fn($p) => $p->unitBisnis->nama_unit_bisnis)
+            ->unique()->values()->all(),
+        'kategori' => $allPropsForMeta->pluck('kategori')->filter()->unique()->sort()->values()->all(),
+        'locations' => $allPropsForMeta->pluck('alamat')->filter()
+            ->map(fn($a) => $extractCityProp((string) $a))
+            ->unique()->sort()->values()->all(),
+        'price_ranges' => [
+            ['label' => '< 200 Jt', 'min' => 0, 'max' => 200_000_000],
+            ['label' => '200 Jt - 500 Jt', 'min' => 200_000_000, 'max' => 500_000_000],
+            ['label' => '500 Jt - 1 M', 'min' => 500_000_000, 'max' => 1_000_000_000],
+            ['label' => '1 M - 2 M', 'min' => 1_000_000_000, 'max' => 2_000_000_000],
+            ['label' => '> 2 M', 'min' => 2_000_000_000, 'max' => null],
+        ],
+    ];
+
+    // 4. Read search query params
+    $filterProject = $request->get('project');
+    $filterKategori = $request->get('kategori');
+    $filterLocation = $request->get('location');
+    $filterPrice = $request->get('price');
+
+    // Price range to min/max map
+    $priceMap = [
+        '< 200 Jt' => ['min' => 0, 'max' => 200_000_000],
+        '200 Jt - 500 Jt' => ['min' => 200_000_000, 'max' => 500_000_000],
+        '500 Jt - 1 M' => ['min' => 500_000_000, 'max' => 1_000_000_000],
+        '1 M - 2 M' => ['min' => 1_000_000_000, 'max' => 2_000_000_000],
+        '> 2 M' => ['min' => 2_000_000_000, 'max' => null],
+    ];
+
+    // 5. Build filtered query (still eager-loaded)
+    $query = \App\Models\Property::with('unitBisnis')->latest('id');
+
+    if ($filterProject) {
+        $query->whereHas('unitBisnis', fn($q) => $q->where('nama_unit_bisnis', $filterProject));
+    }
+    if ($filterKategori) {
+        $query->where('kategori', $filterKategori);
+    }
+    if ($filterLocation) {
+        $query->where('alamat', 'LIKE', '%' . $filterLocation . '%');
+    }
+    if ($filterPrice && isset($priceMap[$filterPrice])) {
+        $range = $priceMap[$filterPrice];
+        $query->where('harga_mulai', '>=', $range['min']);
+        if ($range['max'] !== null) {
+            $query->where('harga_mulai', '<=', $range['max']);
+        }
+    }
+
+    $properties = $query->get()
         ->map(function (\App\Models\Property $property) {
             $images = collect($property->gambar_utama ?? [])
                 ->filter(fn($path) => filled($path))
@@ -186,6 +277,8 @@ Route::get('/property', function () {
                 'image' => $images,
                 'tipe_rumah' => is_array($property->tipe_rumah) ? $property->tipe_rumah : [],
                 'kategori' => $property->kategori,
+                'harga_mulai' => $property->harga_mulai,
+                'unit_bisnis' => $property->unitBisnis?->nama_unit_bisnis,
             ];
         })
         ->values()
@@ -210,7 +303,14 @@ Route::get('/property', function () {
 
     return Inertia::render('Property', [
         'page' => $page,
-        'properties' => $properties
+        'properties' => $properties,
+        'searchMeta' => $searchMeta,
+        'searchParams' => [
+            'project' => $filterProject,
+            'kategori' => $filterKategori,
+            'location' => $filterLocation,
+            'price' => $filterPrice,
+        ],
     ]);
 })->name('property.index');
 

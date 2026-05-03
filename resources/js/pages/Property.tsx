@@ -1,5 +1,5 @@
-import { Link, Head } from '@inertiajs/react';
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { Link, Head, router } from '@inertiajs/react';
+import { ChevronRight, ChevronLeft, X } from "lucide-react";
 import { useState, useEffect } from 'react';
 
 // Import Components
@@ -37,6 +37,12 @@ interface Props {
     content: PageSection[];
   };
   properties?: Property[];
+  searchParams?: {
+    project?: string | null;
+    kategori?: string | null;
+    location?: string | null;
+    price?: string | null;
+  };
 }
 
 /* ─── 2. Data Statis Fallback (DISINKRONKAN DENGAN MODEL LARAVEL) ─── */
@@ -67,7 +73,7 @@ const ALL_PROPERTIES_SYNCED: Property[] = [
   }
 ];
 
-export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED }: Props) {
+export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED, searchParams = {} }: Props) {
   /* ─── 3. Hooks (Wajib di atas) ─── */
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -97,6 +103,25 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
 
   const goToNext = () => setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   const goToPrev = () => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+
+  // Active filters derived from searchParams
+  const activeFilters = Object.entries(searchParams)
+    .filter(([, v]) => v)
+    .map(([k, v]) => ({ key: k, value: v as string }));
+
+  const hasFilters = activeFilters.length > 0;
+
+  function clearFilter(key: string) {
+    const params: Record<string, string> = {};
+    Object.entries(searchParams).forEach(([k, v]) => {
+      if (k !== key && v) params[k] = v;
+    });
+    router.visit('/property', { data: params });
+  }
+
+  function clearAllFilters() {
+    router.visit('/property');
+  }
 
   // Ambil data untuk Featured Residence
   const featured = properties[0] || ALL_PROPERTIES_SYNCED[0];
@@ -176,29 +201,77 @@ export default function PropertyPage({ page, properties = ALL_PROPERTIES_SYNCED 
 
         {/* Property Grid */}
         <section className="mx-auto max-w-7xl px-6 pb-16 lg:px-10">
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                {propertyBlock?.data?.title || "All Properties"}
-              </h2>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {propertyBlock?.data?.features?.map((f: any, index: number) => (
-                  <span key={index} className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary rounded-full">
-                    {f.feature}
+          <div className="mb-8 flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  {hasFilters ? "Search Results" : (propertyBlock?.data?.title || "All Properties")}
+                </h2>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {propertyBlock?.data?.features?.map((f: any, index: number) => (
+                    <span key={index} className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary rounded-full">
+                      {f.feature}
+                    </span>
+                  ))}
+                </div>
+                {propertyBlock?.data?.description && !hasFilters && (
+                  <p className="text-sm text-muted-foreground mt-2">{propertyBlock.data.description}</p>
+                )}
+              </div>
+              <span className="shrink-0 text-sm text-muted-foreground">
+                {properties.length} {properties.length === 1 ? 'project' : 'projects'} found
+              </span>
+            </div>
+
+            {/* Active filter chips */}
+            {hasFilters && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-medium text-muted-foreground">Filters:</span>
+                {activeFilters.map(({ key, value }) => (
+                  <span
+                    key={key}
+                    className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                  >
+                    {value}
+                    <button
+                      type="button"
+                      onClick={() => clearFilter(key)}
+                      className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20 transition-colors"
+                      aria-label={`Remove ${value} filter`}
+                    >
+                      <X className="size-3" />
+                    </button>
                   </span>
                 ))}
+                <button
+                  type="button"
+                  onClick={clearAllFilters}
+                  className="text-xs text-muted-foreground underline hover:text-foreground transition-colors"
+                >
+                  Clear all
+                </button>
               </div>
-              {propertyBlock?.data?.description && (
-                <p className="text-sm text-muted-foreground mt-2">{propertyBlock.data.description}</p>
-              )}
-            </div>
-            <span className="text-sm text-muted-foreground">{properties.length} projects found</span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {properties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
+            {properties.length > 0 ? (
+              properties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))
+            ) : (
+              <div className="col-span-full py-16 text-center">
+                <p className="text-lg font-semibold text-foreground">Tidak ada properti ditemukan</p>
+                <p className="mt-2 text-sm text-muted-foreground">Coba ubah atau hapus filter pencarian Anda.</p>
+                <button
+                  type="button"
+                  onClick={clearAllFilters}
+                  className="mt-6 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+                >
+                  Lihat Semua Properti
+                </button>
+              </div>
+            )}
           </div>
         </section>
 

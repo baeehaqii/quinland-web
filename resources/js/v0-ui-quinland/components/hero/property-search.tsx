@@ -2,79 +2,67 @@
 
 import { useState } from "react"
 import { MapPin, Building2, FolderKanban, DollarSign } from "lucide-react"
+import { usePage, router } from "@inertiajs/react"
 
-const LOCATIONS = [
-  "Jakarta",
-  "Surabaya",
-  "Bandung",
-  "Bali",
-  "Yogyakarta",
-  "Medan",
-] as const
-
-const PROPERTY_TYPES = [
-  "House",
-  "Apartment",
-  "Villa",
-  "Condo",
-  "Townhouse",
-  "Land",
-] as const
-
-const PROJECTS = [
-  "Grand Residence",
-  "The Green Park",
-  "Skyline Tower",
-  "Emerald Heights",
-  "Sunset Valley",
-] as const
-
-const PRICE_RANGES = [
-  "< 500 Jt",
-  "500 Jt - 1 M",
-  "1 M - 2 M",
-  "2 M - 5 M",
-  "> 5 M",
-] as const
+interface SearchMeta {
+  unit_bisnis: string[]
+  kategori: string[]
+  locations: string[]
+  price_ranges: { label: string; min: number; max: number | null }[]
+}
 
 export function PropertySearch() {
-  const [location, setLocation] = useState("")
-  const [propertyType, setPropertyType] = useState("")
+  const { props } = usePage<{ searchMeta?: SearchMeta }>()
+  const meta = props.searchMeta ?? { unit_bisnis: [], kategori: [], locations: [], price_ranges: [] }
+
   const [project, setProject] = useState("")
-  const [priceRange, setPriceRange] = useState("")
+  const [kategori, setKategori] = useState("")
+  const [location, setLocation] = useState("")
+  const [price, setPrice] = useState("")
+
+  function handleSearch() {
+    const params: Record<string, string> = {}
+    if (project) params.project = project
+    if (kategori) params.kategori = kategori
+    if (location) params.location = location
+    if (price) params.price = price
+
+    router.visit('/property', { data: params })
+  }
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4">
       <div className="flex flex-col items-stretch gap-3 rounded-2xl bg-card p-4 shadow-xl sm:flex-row sm:items-center sm:rounded-full sm:p-2">
+
+        {/* Project (Unit Bisnis) */}
+        <SearchSelect
+          icon={<FolderKanban className="size-5 shrink-0 text-muted-foreground" />}
+          value={project}
+          onChange={setProject}
+          placeholder="Project"
+          options={meta.unit_bisnis}
+        />
+
+        <Divider />
+
+        {/* Property Type (Kategori) */}
+        <SearchSelect
+          icon={<Building2 className="size-5 shrink-0 text-muted-foreground" />}
+          value={kategori}
+          onChange={setKategori}
+          placeholder="Property Type"
+          options={meta.kategori}
+        />
+
+        <Divider />
+
         {/* Location */}
         <SearchSelect
           icon={<MapPin className="size-5 shrink-0 text-muted-foreground" />}
           value={location}
           onChange={setLocation}
           placeholder="Location"
-          options={[...LOCATIONS]}
-        />
-
-        <Divider />
-
-        {/* Property Type */}
-        <SearchSelect
-          icon={<Building2 className="size-5 shrink-0 text-muted-foreground" />}
-          value={propertyType}
-          onChange={setPropertyType}
-          placeholder="Property Type"
-          options={[...PROPERTY_TYPES]}
-        />
-
-        <Divider />
-
-        {/* Project */}
-        <SearchSelect
-          icon={<FolderKanban className="size-5 shrink-0 text-muted-foreground" />}
-          value={project}
-          onChange={setProject}
-          placeholder="Project"
-          options={[...PROJECTS]}
+          options={meta.locations}
         />
 
         <Divider />
@@ -82,15 +70,16 @@ export function PropertySearch() {
         {/* Price Range */}
         <SearchSelect
           icon={<DollarSign className="size-5 shrink-0 text-muted-foreground" />}
-          value={priceRange}
-          onChange={setPriceRange}
+          value={price}
+          onChange={setPrice}
           placeholder="Price Range"
-          options={[...PRICE_RANGES]}
+          options={meta.price_ranges.map(r => r.label)}
         />
 
         {/* Submit */}
         <button
           type="button"
+          onClick={handleSearch}
           className="shrink-0 cursor-pointer rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
         >
           Find Property
