@@ -129,13 +129,13 @@ export default function AboutPage({ media = {}, page = null, properties = [] }: 
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl">
-              <img
-                src={resolveMediaUrl(aboutSection.image_url ?? aboutSection.image_id ?? media.about_team, "/storage/media/about-team.jpg")}
-                alt="Tim Quinland"
-                width={640}
-                height={480}
-                className="h-[380px] w-full object-cover sm:h-[440px]"
+            <div className="relative overflow-hidden rounded-2xl bg-black">
+              <iframe
+                src="https://drive.google.com/file/d/1I0Pig2atuDRKcqf-vtgnlJodQnDaMx0W/preview"
+                title="Quinland Company Profile"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className="h-[380px] w-full sm:h-[440px]"
               />
             </div>
           </div>
