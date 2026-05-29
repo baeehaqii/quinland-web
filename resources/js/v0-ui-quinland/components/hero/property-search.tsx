@@ -39,7 +39,7 @@ export function PropertySearch() {
           icon={<FolderKanban className="size-5 shrink-0 text-muted-foreground" />}
           value={project}
           onChange={setProject}
-          placeholder="Project"
+          placeholder="Proyek"
           options={meta.unit_bisnis}
         />
 
@@ -50,7 +50,7 @@ export function PropertySearch() {
           icon={<Building2 className="size-5 shrink-0 text-muted-foreground" />}
           value={kategori}
           onChange={setKategori}
-          placeholder="Property Type"
+          placeholder="Tipe Properti"
           options={meta.kategori}
         />
 
@@ -61,7 +61,7 @@ export function PropertySearch() {
           icon={<MapPin className="size-5 shrink-0 text-muted-foreground" />}
           value={location}
           onChange={setLocation}
-          placeholder="Location"
+          placeholder="Lokasi"
           options={meta.locations}
         />
 
@@ -72,7 +72,7 @@ export function PropertySearch() {
           icon={<DollarSign className="size-5 shrink-0 text-muted-foreground" />}
           value={price}
           onChange={setPrice}
-          placeholder="Price Range"
+          placeholder="Rentang Harga"
           options={meta.price_ranges.map(r => r.label)}
         />
 
@@ -82,7 +82,7 @@ export function PropertySearch() {
           onClick={handleSearch}
           className="shrink-0 cursor-pointer rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
         >
-          Find Property
+          Cari Properti
         </button>
       </div>
     </div>
